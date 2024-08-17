@@ -1,0 +1,58 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /identity
+
+spring:
+  application:
+    name: identity-service
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+      dialect: org.hibernate.dialect.MySQL8Dialect
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: ${EMAIL}
+#    password: ${EMAIL_PASSWORD}
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+#    default-encoding: UTF-8
+
+outbound:
+  identity:
+    client-id: ${CLIENT_ID}
+    client-secret: ${CLIENT_SECRET}
+    redirect-uri: ${REDIRECT_URI}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+jwt:
+  signerKey: ${JWT_SECRET}
+  valid-access-duration: 360000000
+  valid-refresh-duration: 3600000
+
+
+app:
+  services:
+    profile: http://localhost:8081/profile
