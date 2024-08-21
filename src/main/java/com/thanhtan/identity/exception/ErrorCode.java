@@ -25,17 +25,17 @@ public enum ErrorCode {
     ROLE_NOT_EXISTED(1015, "Role not existed", HttpStatus.BAD_REQUEST),
     COUPON_NOT_EXISTED(1016, "Coupon code not existed", HttpStatus.BAD_REQUEST),
     NOTIFICATION_NOT_EXISTED(1016, "Notification code not existed", HttpStatus.BAD_REQUEST),
-    USER_INACTIVE(1017,"User have been deleted" , HttpStatus.BAD_REQUEST),
-    PAYMENT_FAILED(1018,"Payment failed" ,  HttpStatus.BAD_REQUEST);
+    USER_INACTIVE(1017, "User have been deleted", HttpStatus.BAD_REQUEST),
+    PAYMENT_FAILED(1018, "Payment failed", HttpStatus.BAD_REQUEST);
 
+
+    private int code;
+    private String message;
+    private HttpStatusCode statusCode;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;
         this.message = message;
         this.statusCode = statusCode;
     }
-
-    private int code;
-    private String message;
-    private HttpStatusCode statusCode;
 }
