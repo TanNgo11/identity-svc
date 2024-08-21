@@ -59,7 +59,7 @@ public class PathConstant {
     };
 
     public static final String[] PUBLIC_POST_ENDPOINTS = {
-            API_V1_USERS,
+            API_V1_USERS + "/registration",
 
     };
 

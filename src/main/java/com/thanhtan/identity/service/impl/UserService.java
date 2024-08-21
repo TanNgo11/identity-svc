@@ -16,6 +16,7 @@ import com.thanhtan.identity.service.IUserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,16 +33,12 @@ import java.util.Set;
 public class UserService implements IUserService {
 
     UserRepository userRepository;
-
     UserMapper userMapper;
-
     RoleRepository roleRepository;
-
     PasswordEncoder BCryptPasswordEncoder;
-
     ProfileMapper profileMapper;
-
     ProfileClient profileClient;
+    KafkaTemplate<String, String> kafkaTemplate;
 
 
     @Override
@@ -64,7 +61,9 @@ public class UserService implements IUserService {
         var profileCreationRequest = profileMapper.toProfileCreationRequest(request);
         profileCreationRequest.setUserId(user.getId().toString());
 
-        var profileResponse = profileClient.createProfile(profileCreationRequest);
+        profileClient.createProfile(profileCreationRequest);
+
+        kafkaTemplate.send("onboard-successful", "Welcome to our new member: " + user.getUsername());
 
         return userMapper.toUserResponse(user);
     }

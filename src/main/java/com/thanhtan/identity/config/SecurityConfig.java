@@ -53,10 +53,9 @@ public class SecurityConfig {
         });
 
 
-
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
-                    return httpSecurity.build();
+        return httpSecurity.build();
     }
 
     @Bean
@@ -78,8 +77,6 @@ public class SecurityConfig {
                 .macAlgorithm(MacAlgorithm.HS512)
                 .build();
     }
-
-
 
 
     @Bean
