@@ -1,5 +1,20 @@
 package com.thanhtan.identity.service.impl;
 
+import java.text.ParseException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.StringJoiner;
+import java.util.UUID;
+
+import jakarta.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -24,24 +39,12 @@ import com.thanhtan.identity.repository.UserRepository;
 import com.thanhtan.identity.repository.httpclient.OutboundIdentityClient;
 import com.thanhtan.identity.repository.httpclient.OutboundUserClient;
 import com.thanhtan.identity.service.IAuthenticationService;
-import jakarta.transaction.Transactional;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import java.text.ParseException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.StringJoiner;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -73,7 +76,6 @@ public class AuthenticationService implements IAuthenticationService {
     @Value("${jwt.valid-refresh-duration}")
     protected long VALID_REFRESH_DURATION;
 
-
     @NonFinal
     @Value("${outbound.identity.client-id}")
     protected String CLIENT_ID;
@@ -89,15 +91,14 @@ public class AuthenticationService implements IAuthenticationService {
     @NonFinal
     protected final String GRANT_TYPE = "authorization_code";
 
-
     @Override
     @Transactional
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
-        var user = userRepository.findByUsername(authenticationRequest.getUsername())
+        var user = userRepository
+                .findByUsername(authenticationRequest.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        if (user.getStatus() == Status.INACTIVE)
-            throw new AppException(ErrorCode.USER_INACTIVE);
+        if (user.getStatus() == Status.INACTIVE) throw new AppException(ErrorCode.USER_INACTIVE);
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
@@ -110,7 +111,6 @@ public class AuthenticationService implements IAuthenticationService {
         var accessToken = generateToken(user, false);
         var refreshToken = generateToken(user, true);
 
-
         RefreshToken refreshTokenEntity = new RefreshToken();
 
         refreshTokenEntity.setToken(refreshToken);
@@ -118,14 +118,12 @@ public class AuthenticationService implements IAuthenticationService {
         refreshTokenEntity.setExpiryTime(Date.from(Instant.now().plus(VALID_REFRESH_DURATION, ChronoUnit.SECONDS)));
         refreshTokenRepository.save(refreshTokenEntity);
 
-        return AuthenticationResponse
-                .builder()
+        return AuthenticationResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .authenticated(true)
                 .build();
     }
-
 
     @Override
     @Transactional
@@ -157,15 +155,13 @@ public class AuthenticationService implements IAuthenticationService {
                 .issuer("thanhtan.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(duration, ChronoUnit.SECONDS).toEpochMilli()
-                ))
+                        Instant.now().plus(duration, ChronoUnit.SECONDS).toEpochMilli()))
                 .claim("customClaim", "custom")
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
-
 
         JWSObject jwsObject = new JWSObject(header, payload);
 
@@ -181,21 +177,17 @@ public class AuthenticationService implements IAuthenticationService {
     private String resetRefreshToken(User user, long expirationTime, String jwtId) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
-
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getUsername())
                 .issuer("thanhtan.com")
                 .issueTime(new Date())
-                .expirationTime(new Date(
-                        expirationTime
-                ))
+                .expirationTime(new Date(expirationTime))
                 .claim("customClaim", "custom")
                 .jwtID(jwtId)
                 .claim("scope", buildScope(user))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
-
 
         JWSObject jwsObject = new JWSObject(header, payload);
 
@@ -208,7 +200,6 @@ public class AuthenticationService implements IAuthenticationService {
         }
     }
 
-
     @Override
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         var token = request.getToken();
@@ -219,9 +210,7 @@ public class AuthenticationService implements IAuthenticationService {
         } catch (AppException e) {
             isValid = false;
         }
-        return IntrospectResponse.builder()
-                .valid(isValid)
-                .build();
+        return IntrospectResponse.builder().valid(isValid).build();
     }
 
     private String buildScope(User user) {
@@ -239,7 +228,6 @@ public class AuthenticationService implements IAuthenticationService {
         return stringJoiner.toString();
     }
 
-
     @Override
     @Transactional
     public AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException {
@@ -249,9 +237,8 @@ public class AuthenticationService implements IAuthenticationService {
         var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
         var username = signedJWT.getJWTClaimsSet().getSubject();
 
-        var user = userRepository.findByUsername(username).orElseThrow(
-                () -> new AppException(ErrorCode.UNAUTHENTICATED)
-        );
+        var user =
+                userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
         if (!refreshTokenRepository.existsByToken(request.getRefreshToken()))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
@@ -260,12 +247,10 @@ public class AuthenticationService implements IAuthenticationService {
         var refreshToken = resetRefreshToken(user, expiryTime.getTime(), jit);
         RefreshToken refreshTokenEntity = new RefreshToken();
 
-
         refreshTokenEntity.setToken(refreshToken);
         refreshTokenEntity.setUsername(user.getUsername());
         refreshTokenEntity.setExpiryTime(expiryTime);
         refreshTokenRepository.save(refreshTokenEntity);
-
 
         var accesstoken = generateToken(user, false);
 
@@ -276,75 +261,72 @@ public class AuthenticationService implements IAuthenticationService {
                 .build();
     }
 
-//    @Override
-//    public AuthenticationResponse OutboundAuthenticate(String code) {
-//        var response = outboundIdentityClient.exchangeToken(ExchangeTokenRequest.builder()
-//                .code(code)
-//                .clientId(CLIENT_ID)
-//                .clientSecret(CLIENT_SECRET)
-//                .redirectUri(REDIRECT_URI)
-//                .grantType(GRANT_TYPE)
-//                .build());
-//
-//        log.info("TOKEN RESPONSE {}", response);
-//
-//        var userInfo = outboundUserClient.getUserInfor("json", response.getAccessToken());
-//
-//        log.info("USER INFO {}", userInfo);
-//
-//
-//        Set<com.thanhtan.identity.entity.Role> roles = new HashSet<>();
-//        com.thanhtan.identity.entity.Role userRole = roleRepository.findByName(com.thanhtan.identity.enums.Role.USER.name()).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
-//        roles.add(userRole);
-//
-//        var user = userRepository.findByUsername(userInfo.getEmail())
-//                .orElseGet(() -> {
-//                    User newUser = User.builder()
-//                            .username(userInfo.getEmail())
-//                            .firstName(userInfo.getGivenName())
-//                            .lastName(userInfo.getFamilyName())
-//                            .password(UUID.randomUUID().toString())
-//                            .roles(roles)
-//                            .build();
-//                    return userRepository.save(newUser);
-//                });
-//        var accessToken = generateToken(user, false);
-//        var refreshToken = generateToken(user, true);
-//
-//
-//        RefreshToken refreshTokenEntity = new RefreshToken();
-//
-//        refreshTokenEntity.setToken(refreshToken);
-//        refreshTokenEntity.setUsername(user.getUsername());
-//        refreshTokenEntity.setExpiryTime(Date.from(Instant.now().plus(VALID_REFRESH_DURATION, ChronoUnit.SECONDS)));
-//        refreshTokenRepository.save(refreshTokenEntity);
-//
-//        return AuthenticationResponse
-//                .builder()
-//                .accessToken(accessToken)
-//                .refreshToken(refreshToken)
-//                .authenticated(true)
-//                .build();
-//    }
-
+    //    @Override
+    //    public AuthenticationResponse OutboundAuthenticate(String code) {
+    //        var response = outboundIdentityClient.exchangeToken(ExchangeTokenRequest.builder()
+    //                .code(code)
+    //                .clientId(CLIENT_ID)
+    //                .clientSecret(CLIENT_SECRET)
+    //                .redirectUri(REDIRECT_URI)
+    //                .grantType(GRANT_TYPE)
+    //                .build());
+    //
+    //        log.info("TOKEN RESPONSE {}", response);
+    //
+    //        var userInfo = outboundUserClient.getUserInfor("json", response.getAccessToken());
+    //
+    //        log.info("USER INFO {}", userInfo);
+    //
+    //
+    //        Set<com.thanhtan.identity.entity.Role> roles = new HashSet<>();
+    //        com.thanhtan.identity.entity.Role userRole =
+    // roleRepository.findByName(com.thanhtan.identity.enums.Role.USER.name()).orElseThrow(() -> new
+    // AppException(ErrorCode.ROLE_NOT_EXISTED));
+    //        roles.add(userRole);
+    //
+    //        var user = userRepository.findByUsername(userInfo.getEmail())
+    //                .orElseGet(() -> {
+    //                    User newUser = User.builder()
+    //                            .username(userInfo.getEmail())
+    //                            .firstName(userInfo.getGivenName())
+    //                            .lastName(userInfo.getFamilyName())
+    //                            .password(UUID.randomUUID().toString())
+    //                            .roles(roles)
+    //                            .build();
+    //                    return userRepository.save(newUser);
+    //                });
+    //        var accessToken = generateToken(user, false);
+    //        var refreshToken = generateToken(user, true);
+    //
+    //
+    //        RefreshToken refreshTokenEntity = new RefreshToken();
+    //
+    //        refreshTokenEntity.setToken(refreshToken);
+    //        refreshTokenEntity.setUsername(user.getUsername());
+    //        refreshTokenEntity.setExpiryTime(Date.from(Instant.now().plus(VALID_REFRESH_DURATION,
+    // ChronoUnit.SECONDS)));
+    //        refreshTokenRepository.save(refreshTokenEntity);
+    //
+    //        return AuthenticationResponse
+    //                .builder()
+    //                .accessToken(accessToken)
+    //                .refreshToken(refreshToken)
+    //                .authenticated(true)
+    //                .build();
+    //    }
 
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
         SignedJWT signedJWT = SignedJWT.parse(token);
         String tokenId = signedJWT.getJWTClaimsSet().getJWTID();
 
-
         Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
 
         var verified = signedJWT.verify(verifier);
 
+        if (!(verified && expiryTime.after(new Date()))) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
-        if (!(verified && expiryTime.after(new Date())))
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
-
-        if (invalidatedTokenRepository.existsById(tokenId))
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
-
+        if (invalidatedTokenRepository.existsById(tokenId)) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         return signedJWT;
     }

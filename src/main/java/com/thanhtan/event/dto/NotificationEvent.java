@@ -1,10 +1,9 @@
 package com.thanhtan.event.dto;
 
+import java.util.Map;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Map;
 
 @Data
 @NoArgsConstructor

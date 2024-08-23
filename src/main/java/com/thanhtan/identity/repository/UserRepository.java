@@ -1,15 +1,15 @@
 package com.thanhtan.identity.repository;
 
-import com.thanhtan.identity.entity.Role;
-import com.thanhtan.identity.entity.User;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import com.thanhtan.identity.entity.Role;
+import com.thanhtan.identity.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
@@ -25,11 +25,8 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query("SELECT u FROM User u JOIN FETCH u.roles r WHERE r.name = :roleName")
     List<User> findAllWithRoles(@Param("roleName") String roleName);
 
-
     User findById(Long userId);
-
 
     @Query("SELECT u FROM User u WHERE u.id IN :ids")
     List<User> findUsersByIds(List<Long> ids);
-
 }

@@ -1,9 +1,9 @@
 package com.thanhtan.identity.dto.response;
 
+import java.time.LocalDate;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Data
 @Builder
@@ -16,5 +16,4 @@ public class UserProfileResponse {
     String firstName;
     String lastName;
     LocalDate dob;
-
 }

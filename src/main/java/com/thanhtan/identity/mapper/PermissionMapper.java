@@ -1,9 +1,10 @@
 package com.thanhtan.identity.mapper;
 
+import org.mapstruct.Mapper;
+
 import com.thanhtan.identity.dto.request.PermissionRequest;
 import com.thanhtan.identity.dto.response.PermissionResponse;
 import com.thanhtan.identity.entity.Permission;
-import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface PermissionMapper {

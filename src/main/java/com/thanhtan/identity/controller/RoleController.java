@@ -1,18 +1,20 @@
 package com.thanhtan.identity.controller;
 
+import static com.thanhtan.identity.constant.PathConstant.API_V1_ROLES;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.thanhtan.identity.dto.request.RoleRequest;
 import com.thanhtan.identity.dto.response.ApiResponse;
 import com.thanhtan.identity.dto.response.RoleResponse;
 import com.thanhtan.identity.service.IRoleService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import static com.thanhtan.identity.constant.PathConstant.API_V1_ROLES;
 
 @RestController
 @RequestMapping(API_V1_ROLES)
@@ -20,7 +22,6 @@ import static com.thanhtan.identity.constant.PathConstant.API_V1_ROLES;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RoleController {
-
 
     IRoleService roleService;
 
@@ -39,6 +40,4 @@ public class RoleController {
         roleService.deleteRole(roleId);
         return ApiResponse.empty();
     }
-
-
 }

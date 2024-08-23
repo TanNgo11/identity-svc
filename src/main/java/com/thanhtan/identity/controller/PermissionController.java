@@ -1,19 +1,20 @@
 package com.thanhtan.identity.controller;
 
+import static com.thanhtan.identity.constant.PathConstant.API_V1_PERMISSION;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
 
 import com.thanhtan.identity.dto.request.PermissionRequest;
 import com.thanhtan.identity.dto.response.ApiResponse;
 import com.thanhtan.identity.dto.response.PermissionResponse;
 import com.thanhtan.identity.service.impl.PermissionService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import static com.thanhtan.identity.constant.PathConstant.API_V1_PERMISSION;
 
 @RestController
 @RequestMapping(API_V1_PERMISSION)

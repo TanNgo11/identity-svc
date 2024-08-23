@@ -1,9 +1,9 @@
 package com.thanhtan.identity.service;
 
+import java.util.List;
+
 import com.thanhtan.identity.dto.request.RoleRequest;
 import com.thanhtan.identity.dto.response.RoleResponse;
-
-import java.util.List;
 
 public interface IRoleService {
     RoleResponse createRole(RoleRequest request);

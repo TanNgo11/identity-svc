@@ -1,11 +1,12 @@
 package com.thanhtan.identity.dto.request;
 
+import java.time.LocalDate;
+
 import com.thanhtan.identity.enums.Status;
 import com.thanhtan.identity.validator.DobConstraint;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -24,4 +25,3 @@ public class UserUpdationRequest {
     @DobConstraint(min = 18, message = "INVALID_DOB")
     LocalDate dateOfBirth;
 }
-

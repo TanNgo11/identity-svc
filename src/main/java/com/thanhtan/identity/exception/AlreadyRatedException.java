@@ -17,4 +17,3 @@ public class AlreadyRatedException extends RuntimeException {
         this.errorCode = errorCode;
     }
 }
-

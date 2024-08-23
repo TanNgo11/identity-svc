@@ -11,5 +11,4 @@ import lombok.experimental.FieldDefaults;
 public class LogoutRequest {
     String accessToken;
     String refreshToken;
-
 }
