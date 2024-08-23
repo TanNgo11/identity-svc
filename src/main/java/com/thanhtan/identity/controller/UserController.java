@@ -4,6 +4,8 @@ import com.thanhtan.identity.dto.request.UserCreationRequest;
 import com.thanhtan.identity.dto.response.ApiResponse;
 import com.thanhtan.identity.dto.response.UserResponse;
 import com.thanhtan.identity.service.IUserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ public class UserController {
 
     }
 
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/myInfo")
     @PreAuthorize("hasRole('USER')||hasRole('ADMIN')||hasRole('STAFF')")
     ApiResponse<UserResponse> getMyInfo() {
