@@ -1,22 +1,22 @@
 package com.thanhtan.identity.service;
 
+import java.util.List;
+
 import com.thanhtan.identity.dto.request.UserCreationRequest;
 import com.thanhtan.identity.dto.response.UserResponse;
-
-import java.util.List;
 
 public interface IUserService {
     UserResponse createUser(UserCreationRequest request);
 
     UserResponse getMyInfo();
 
-//    UserResponse updateUserProfile(UpdateUserRequest request, MultipartFile file);
-//
-//    UserResponse createSystemUser(CreateSystemUserRequest request, MultipartFile file);
-//
-//    UserResponse updateSystemUser(UpdateSystemUserRequest request, MultipartFile file, Long userId);
-//
-//    UserResponse updateUserProfileById(UpdateUserRequest request, MultipartFile file, Long userId);
+    //    UserResponse updateUserProfile(UpdateUserRequest request, MultipartFile file);
+    //
+    //    UserResponse createSystemUser(CreateSystemUserRequest request, MultipartFile file);
+    //
+    //    UserResponse updateSystemUser(UpdateSystemUserRequest request, MultipartFile file, Long userId);
+    //
+    //    UserResponse updateUserProfileById(UpdateUserRequest request, MultipartFile file, Long userId);
 
     List<UserResponse> getUsers();
 
@@ -29,5 +29,4 @@ public interface IUserService {
     List<UserResponse> getAllAdmin();
 
     void deleteUserssByIds(Long[] ids);
-
 }

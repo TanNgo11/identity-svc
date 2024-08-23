@@ -1,5 +1,12 @@
 package com.thanhtan.identity.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import jakarta.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
 import com.thanhtan.identity.dto.request.PermissionRequest;
 import com.thanhtan.identity.dto.response.PermissionResponse;
 import com.thanhtan.identity.entity.Permission;
@@ -8,15 +15,11 @@ import com.thanhtan.identity.exception.ErrorCode;
 import com.thanhtan.identity.mapper.PermissionMapper;
 import com.thanhtan.identity.repository.PermissionRepository;
 import com.thanhtan.identity.service.IPermissionService;
-import jakarta.transaction.Transactional;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +29,6 @@ public class PermissionService implements IPermissionService {
 
     PermissionRepository permissionRepository;
     PermissionMapper permissionMapper;
-
 
     @Override
     @Transactional

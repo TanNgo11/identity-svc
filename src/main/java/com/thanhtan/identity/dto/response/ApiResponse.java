@@ -1,6 +1,7 @@
 package com.thanhtan.identity.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,10 +14,11 @@ import lombok.experimental.FieldDefaults;
 public class ApiResponse<T> {
     @Builder.Default
     private int code = 1000;
+
     String message;
     T result;
 
-    public static  <T> ApiResponse<T> success(T result) {
+    public static <T> ApiResponse<T> success(T result) {
         return ApiResponse.<T>builder()
                 .code(1000)
                 .message("SUCCESS")
@@ -27,6 +29,4 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> empty() {
         return success(null);
     }
-
-
 }

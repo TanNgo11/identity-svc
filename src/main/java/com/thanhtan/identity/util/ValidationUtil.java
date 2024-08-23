@@ -1,5 +1,13 @@
 package com.thanhtan.identity.util;
 
+import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -8,17 +16,8 @@ import com.thanhtan.identity.dto.request.SystemUserUpdationRequest;
 import com.thanhtan.identity.dto.request.UserUpdationRequest;
 import com.thanhtan.identity.exception.AppException;
 import com.thanhtan.identity.exception.ErrorCode;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-
-import java.io.IOException;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 
 public class ValidationUtil {
-
 
     public static UserUpdationRequest validateUserStr(String userStr) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -28,9 +27,8 @@ public class ValidationUtil {
         Set<ConstraintViolation<UserUpdationRequest>> violations = validator.validate(updateUserRequest);
 
         if (!violations.isEmpty()) {
-            String errorMessage = violations.stream()
-                    .map(ConstraintViolation::getMessage)
-                    .collect(Collectors.joining(", "));
+            String errorMessage =
+                    violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(", "));
             ErrorCode errorCode = determineErrorCode(errorMessage);
             throw new AppException(errorCode);
         }
@@ -46,9 +44,8 @@ public class ValidationUtil {
         Set<ConstraintViolation<CreateSystemUserRequest>> violations = validator.validate(userRequest);
 
         if (!violations.isEmpty()) {
-            String errorMessage = violations.stream()
-                    .map(ConstraintViolation::getMessage)
-                    .collect(Collectors.joining(", "));
+            String errorMessage =
+                    violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(", "));
             ErrorCode errorCode = determineErrorCode(errorMessage);
             throw new AppException(errorCode);
         }
@@ -65,9 +62,8 @@ public class ValidationUtil {
         Set<ConstraintViolation<SystemUserUpdationRequest>> violations = validator.validate(userRequest);
 
         if (!violations.isEmpty()) {
-            String errorMessage = violations.stream()
-                    .map(ConstraintViolation::getMessage)
-                    .collect(Collectors.joining(", "));
+            String errorMessage =
+                    violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(", "));
             ErrorCode errorCode = determineErrorCode(errorMessage);
             throw new AppException(errorCode);
         }

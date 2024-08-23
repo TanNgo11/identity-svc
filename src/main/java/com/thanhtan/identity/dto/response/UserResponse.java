@@ -1,17 +1,17 @@
 package com.thanhtan.identity.dto.response;
 
+import java.util.Date;
+import java.util.Set;
 
 import com.thanhtan.identity.enums.Gender;
 import com.thanhtan.identity.enums.Status;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-
-import java.util.Date;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -31,5 +31,4 @@ public class UserResponse extends BaseDTO {
     String avatar;
     Set<String> roles;
     Status status;
-
 }

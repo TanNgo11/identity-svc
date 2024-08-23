@@ -1,13 +1,15 @@
 package com.thanhtan.identity.dto.request;
 
+import java.time.LocalDate;
+
+import jakarta.validation.constraints.Size;
+
 import com.thanhtan.identity.enums.Gender;
 import com.thanhtan.identity.enums.Status;
 import com.thanhtan.identity.validator.DobConstraint;
-import jakarta.validation.constraints.Size;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -17,6 +19,7 @@ import java.time.LocalDate;
 public class CreateSystemUserRequest {
     @Size(min = 8, max = 20, message = "USERNAME_INVALID")
     String username;
+
     @Size(min = 8, max = 20, message = "INVALID_PASSWORD")
     String password;
 

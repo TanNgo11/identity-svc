@@ -1,9 +1,9 @@
 package com.thanhtan.identity.exception;
 
-
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+
+import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
@@ -27,7 +27,6 @@ public enum ErrorCode {
     NOTIFICATION_NOT_EXISTED(1016, "Notification code not existed", HttpStatus.BAD_REQUEST),
     USER_INACTIVE(1017, "User have been deleted", HttpStatus.BAD_REQUEST),
     PAYMENT_FAILED(1018, "Payment failed", HttpStatus.BAD_REQUEST);
-
 
     private int code;
     private String message;

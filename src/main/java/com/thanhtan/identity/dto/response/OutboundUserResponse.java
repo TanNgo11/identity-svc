@@ -1,8 +1,8 @@
 package com.thanhtan.identity.dto.response;
 
-
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,7 +25,4 @@ public class OutboundUserResponse {
     String familyName;
     String picture;
     String locale;
-
-
-
 }

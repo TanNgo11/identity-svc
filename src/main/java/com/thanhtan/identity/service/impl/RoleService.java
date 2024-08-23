@@ -1,5 +1,10 @@
 package com.thanhtan.identity.service.impl;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
 
 import com.thanhtan.identity.dto.request.RoleRequest;
 import com.thanhtan.identity.dto.response.RoleResponse;
@@ -10,15 +15,11 @@ import com.thanhtan.identity.mapper.RoleMapper;
 import com.thanhtan.identity.repository.PermissionRepository;
 import com.thanhtan.identity.repository.RoleRepository;
 import com.thanhtan.identity.service.IRoleService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +52,4 @@ public class RoleService implements IRoleService {
     public void deleteRole(String roleId) {
         roleRepository.deleteById(roleId);
     }
-
-
 }

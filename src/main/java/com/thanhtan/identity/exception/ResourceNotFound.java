@@ -1,9 +1,10 @@
 package com.thanhtan.identity.exception;
 
-public class ResourceNotFound extends RuntimeException{
+public class ResourceNotFound extends RuntimeException {
 
     private ErrorCode errorCode;
-    public ResourceNotFound( ErrorCode errorCode) {
+
+    public ResourceNotFound(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
