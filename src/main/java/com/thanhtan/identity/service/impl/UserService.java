@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import lombok.extern.slf4j.XSlf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +28,8 @@ import com.thanhtan.identity.service.IUserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
+import static java.rmi.server.LogStream.log;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +58,7 @@ public class UserService implements IUserService {
         com.thanhtan.identity.entity.Role userRole = roleRepository
                 .findByName(Role.USER.name())
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
+
         roles.add(userRole);
         user.setRoles(roles);
         user = userRepository.save(user);

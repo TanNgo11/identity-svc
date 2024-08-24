@@ -1,7 +1,11 @@
 package com.thanhtan.identity.config;
 
 import java.util.HashSet;
+import java.util.Set;
 
+import com.thanhtan.identity.exception.AppException;
+import com.thanhtan.identity.exception.ErrorCode;
+import com.thanhtan.identity.repository.RoleRepository;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
+import static java.rmi.server.LogStream.log;
+
 @Configuration
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -23,18 +29,27 @@ import lombok.extern.slf4j.Slf4j;
 public class ApplicationInitConfig {
 
     PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
 
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository) {
         return args -> {
             if (userRepository.findByUsername("admin").isEmpty()) {
-                var roles = new HashSet<String>();
-                roles.add(Role.ADMIN.name());
+                // Set default role for admin user
+                // If the role is not existed, create it
+                HashSet<com.thanhtan.identity.entity.Role> roles = new HashSet<>();
+                roles.add(roleRepository.findByName("ADMIN").orElseGet(() -> {
+                    log("ADMIN role not found. Creating it.");
+                    com.thanhtan.identity.entity.Role role = new com.thanhtan.identity.entity.Role();
+                    role.setName("ADMIN");
+                    return roleRepository.save(role);
+                }));
 
+                //orElseThrow(()->new AppException(ErrorCode.ROLE_NOT_EXISTED))
                 User user = User.builder()
                         .username("admin")
                         .password(passwordEncoder.encode("admin"))
-                        //                        .roles(roles)
+                        .roles(roles)
                         .build();
 
                 userRepository.save(user);

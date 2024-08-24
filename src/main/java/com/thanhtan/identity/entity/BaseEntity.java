@@ -1,6 +1,7 @@
 package com.thanhtan.identity.entity;
 
 import java.util.Date;
+import java.util.UUID;
 
 import jakarta.persistence.*;
 

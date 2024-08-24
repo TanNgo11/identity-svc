@@ -13,7 +13,8 @@ import com.thanhtan.identity.dto.response.UserProfileResponse;
 @FeignClient(
         name = "profile-service",
         url = "${app.services.profile}",
-        configuration = {AuthenticationRequestInterceptor.class})
+        configuration = {AuthenticationRequestInterceptor.class}
+)
 public interface ProfileClient {
     @PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
     ApiResponse<UserProfileResponse> createProfile(@RequestBody ProfileCreationRequest request);
