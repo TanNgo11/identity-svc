@@ -2,6 +2,8 @@ package com.shadcn.identity.dto.response;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,6 +17,7 @@ public class UserProfileResponse {
     String userId;
     String firstName;
     String lastName;
+    @JsonSerialize(using = LocalDateSerializer.class)
     LocalDate dateOfBirth;
     String address;
     String email;

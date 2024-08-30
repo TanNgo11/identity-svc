@@ -31,6 +31,8 @@ import com.shadcn.identity.service.IUserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +47,7 @@ public class UserService implements IUserService {
     ProfileMapper profileMapper;
     ProfileClient profileClient;
     KafkaTemplate<String, Object> kafkaTemplate;
+    TemplateEngine templateEngine;
 
     @Override
     public UserResponse createUser(UserCreationRequest request) {
@@ -79,19 +82,16 @@ public class UserService implements IUserService {
 
         log.info("Profile created: {}", profileResponse);
 
-        // Send notification
-        StringBuilder sb = new StringBuilder();
-        sb.append("Hello, ").append(request.getFirstName()).append(" ")
-                .append(request.getLastName()).append("\n")
-                .append("Please verify your email address by clicking the link below: ")
-                .append("http://localhost:8080/api/v1/users/verify-email?email=").append(request.getEmail());
-        //.append(" & OTP=").append(generateOtp());
+        Context context = new Context();
+        context.setVariable("name", request.getFirstName() + " " + request.getLastName());
+        context.setVariable("email", request.getEmail());
+        context.setVariable("verifyEmailLink", "http://localhost:8080/api/v1/users/verify-email?email=" + request.getEmail());
 
         NotificationEvent notificationEvent = NotificationEvent.builder()
                 .channel("EMAIL")
                 .recipient(request.getEmail())
                 .subject("Welcome to our system")
-                .body(sb.toString())
+                .body(templateEngine.process("/template-email/index.html", context))
                 .build();
 
         kafkaTemplate.send("notification-delivery", notificationEvent);
