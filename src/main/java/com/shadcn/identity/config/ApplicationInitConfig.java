@@ -1,22 +1,23 @@
 package com.shadcn.identity.config;
 
-import static java.rmi.server.LogStream.log;
-
 import java.util.HashSet;
-
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.shadcn.identity.entity.User;
 import com.shadcn.identity.repository.RoleRepository;
 import com.shadcn.identity.repository.UserRepository;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+
+import static java.rmi.server.LogStream.log;
+
 
 @Configuration
 @RequiredArgsConstructor
@@ -36,22 +37,24 @@ public class ApplicationInitConfig {
 
                 HashSet<com.shadcn.identity.entity.Role> roles = new HashSet<>();
                 roles.add(roleRepository.findByName("ADMIN").orElseGet(() -> {
-                    log("ADMIN role not found. Creating it.");
+                    log.info("ADMIN role not found. Creating it.");
                     com.shadcn.identity.entity.Role role = new com.shadcn.identity.entity.Role();
                     role.setName("ADMIN");
+                    role.setDescription("Admin role");
                     return roleRepository.save(role);
                 }));
 
-                // orElseThrow(()->new AppException(ErrorCode.ROLE_NOT_EXISTED))
+                //orElseThrow(()->new AppException(ErrorCode.ROLE_NOT_EXISTED))
                 User user = User.builder()
+                        .emailVerified(true)
                         .username("admin")
                         .password(passwordEncoder.encode("admin"))
                         .roles(roles)
+                        .status(com.shadcn.identity.enums.Status.ACTIVE)
                         .build();
 
                 userRepository.save(user);
-                ApplicationInitConfig.log.warn(
-                        "admin user has been created with default password: admin, please change it");
+                ApplicationInitConfig.log.warn("admin user has been created with default password: admin, please change it");
             }
             //            emailSender.sendTestEmail();
         };
