@@ -4,6 +4,9 @@ import static com.shadcn.identity.constant.PathConstant.API_V1_USERS;
 
 import java.util.List;
 
+import com.cloudinary.Api;
+import com.shadcn.identity.entity.User;
+import com.shadcn.identity.service.IAuthenticationService;
 import jakarta.validation.Valid;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -80,6 +83,12 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     ApiResponse<UserResponse> getSystemUsersById(@PathVariable Long userId) {
         return ApiResponse.success(userService.getSystemUsersById(userId));
+    }
+
+    @PostMapping("/verify-email")
+    @PreAuthorize("hasRole('ADMIN')||hasRole('STAFF')||hasRole('USER')")
+    public ApiResponse<UserResponse> verifyEmail(@RequestParam("email") String email) {
+        return ApiResponse.success(userService.verifyEmail(email));
     }
 
     //    @PutMapping(value = "/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

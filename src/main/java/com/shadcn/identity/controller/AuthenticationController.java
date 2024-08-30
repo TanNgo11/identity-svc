@@ -4,10 +4,9 @@ import static com.shadcn.identity.constant.PathConstant.API_V1_AUTH;
 
 import java.text.ParseException;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.shadcn.identity.dto.response.UserResponse;
+import com.shadcn.identity.entity.User;
+import org.springframework.web.bind.annotation.*;
 
 import com.nimbusds.jose.JOSEException;
 import com.shadcn.identity.dto.request.AuthenticationRequest;
@@ -60,4 +59,5 @@ public class AuthenticationController {
         authenticationService.logout(request);
         return ApiResponse.<Void>builder().build();
     }
+
 }
