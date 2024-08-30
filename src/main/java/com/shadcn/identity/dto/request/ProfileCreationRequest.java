@@ -1,9 +1,9 @@
 package com.shadcn.identity.dto.request;
 
-import java.time.LocalDate;
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -14,7 +14,7 @@ public class ProfileCreationRequest {
     String userId;
     String firstName;
     String lastName;
-    LocalDate dob;
+    LocalDate dateOfBirth;
     String address;
     String email;
     String phoneNumber;
