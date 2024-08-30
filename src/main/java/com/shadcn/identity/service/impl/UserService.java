@@ -1,10 +1,13 @@
 package com.shadcn.identity.service.impl;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.nimbusds.jose.JOSEException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +34,7 @@ import lombok.experimental.FieldDefaults;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService implements IUserService {
 
@@ -55,25 +59,49 @@ public class UserService implements IUserService {
         Set<com.shadcn.identity.entity.Role> roles = new HashSet<>();
         com.shadcn.identity.entity.Role userRole = roleRepository
                 .findByName(Role.USER.name())
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
+                .orElseGet(() -> {
+                    log.info("USER role not found. Creating it.");
+                    com.shadcn.identity.entity.Role role = new com.shadcn.identity.entity.Role();
+                    role.setName(Role.USER.name());
+                    role.setDescription("User role");
+                    return roleRepository.save(role);
+                });
         roles.add(userRole);
         user.setRoles(roles);
         user = userRepository.save(user);
 
         var profileCreationRequest = profileMapper.toProfileCreationRequest(request);
-        profileCreationRequest.setUserId(user.getId().toString());
+        profileCreationRequest.setUserId(String.valueOf(user.getId()));
 
-        profileClient.createProfile(profileCreationRequest);
+        log.info("Creating profile: {}", profileCreationRequest);
+
+        var profileResponse = profileClient.createProfile(profileCreationRequest);
+
+        log.info("Profile created: {}", profileResponse);
+
+        // Send notification
+        StringBuilder sb = new StringBuilder();
+        sb.append("Hello, ").append(request.getFirstName()).append(" ")
+                .append(request.getLastName()).append("\n")
+                .append("Please verify your email address by clicking the link below: ")
+                .append("http://localhost:8080/api/v1/users/verify-email?email=").append(request.getEmail());
+        //.append(" & OTP=").append(generateOtp());
+
         NotificationEvent notificationEvent = NotificationEvent.builder()
                 .channel("EMAIL")
-                .recipient(request.getFirstName())
-                .subject("Welcome to bookteria")
-                .body("Hello, " + request.getUsername())
+                .recipient(request.getEmail())
+                .subject("Welcome to our system")
+                .body(sb.toString())
                 .build();
 
         kafkaTemplate.send("notification-delivery", notificationEvent);
 
         return userMapper.toUserResponse(user);
+    }
+
+    // Generate 6 digit random otp
+    private String generateOtp() {
+        return String.valueOf((int) (Math.random() * 900000 + 100000));
     }
 
     @Override
@@ -244,5 +272,33 @@ public class UserService implements IUserService {
     @Override
     public List<UserResponse> getAllCustomer() {
         return userMapper.toUserResponseList(userRepository.findAllWithRoles(Role.USER.name()));
+    }
+
+    @Override
+    public UserResponse verifyEmail(String email) {
+        var user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if (user.isEmailVerified()) throw new AppException(ErrorCode.EMAIL_ALREADY_VERIFIED);
+        else {
+            user.setEmailVerified(true);
+        }
+
+        userRepository.save(user);
+
+        // Send notification after email verified
+        StringBuilder sb = new StringBuilder();
+        sb.append("Hello, ").append(user.getUsername()).append(".\n")
+                .append("Your email has been verified successfully.");
+
+        NotificationEvent notificationEvent = NotificationEvent.builder()
+                .channel("EMAIL")
+                .recipient(user.getEmail())
+                .subject("Email Verified")
+                .body(sb.toString())
+                .build();
+
+        kafkaTemplate.send("notification-delivery", notificationEvent);
+
+        return userMapper.toUserResponse(user);
     }
 }
