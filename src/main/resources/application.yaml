@@ -19,18 +19,17 @@ spring:
       hibernate.format_sql: true
       dialect: org.hibernate.dialect.MySQL8Dialect
   kafka:
-    bootstrap-servers: localhost:9094
+    bootstrap-servers: ${KAFKA_SERVER}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        spring.json.trusted.packages: "*"
-#        security.protocol: SASL_SSL
-#        sasl.mechanism: SCRAM-SHA-256
-#        sasl.jaas.config: >
-#          org.apache.kafka.common.security.scram.ScramLoginModule required
-#          username="${KAFKA_USERNAME}"
-#          password="${KAFKA_PASSWORD}";
+        security.protocol: SASL_SSL
+        sasl.mechanism: SCRAM-SHA-256
+        sasl.jaas.config: >
+          org.apache.kafka.common.security.scram.ScramLoginModule required
+          username="${KAFKA_USERNAME}"
+          password="${KAFKA_PASSWORD}";
 
 
 #  mail:
