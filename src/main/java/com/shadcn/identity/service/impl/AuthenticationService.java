@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.UUID;
 
@@ -104,8 +103,6 @@ public class AuthenticationService implements IAuthenticationService {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
         boolean authenticated = passwordEncoder.matches(authenticationRequest.getPassword(), user.getPassword());
-
-        log.info("authenticated {} {} {}", authenticated, authenticationRequest.getPassword(), user.getPassword());
 
         if (!authenticated) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
@@ -263,8 +260,6 @@ public class AuthenticationService implements IAuthenticationService {
                 .authenticated(true)
                 .build();
     }
-
-
 
     //    @Override
     //    public AuthenticationResponse OutboundAuthenticate(String code) {
