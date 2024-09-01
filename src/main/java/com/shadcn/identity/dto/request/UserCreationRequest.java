@@ -2,8 +2,6 @@ package com.shadcn.identity.dto.request;
 
 import java.time.LocalDate;
 
-import com.shadcn.identity.validator.EmailConstraint;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import com.shadcn.identity.enums.Status;
@@ -30,13 +28,6 @@ public class UserCreationRequest {
     @DobConstraint(min = 10, message = "INVALID_DOB")
     LocalDate dob;
 
-    @EmailConstraint
-    String email;
-
     @Builder.Default
     Status status = Status.ACTIVE;
-
-    String address;
-    String gender;
-    String phoneNumber;
 }

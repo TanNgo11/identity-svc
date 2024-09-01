@@ -19,8 +19,6 @@ target/
 *.iml
 *.ipr
 
-/src/main/resources/application.yaml
-
 .env.local
 .env
 ### NetBeans ###
