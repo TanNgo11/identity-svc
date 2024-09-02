@@ -2,12 +2,12 @@ package com.shadcn.identity.controller;
 
 import static com.shadcn.identity.constant.PathConstant.API_V1_USERS;
 
+import com.shadcn.identity.dto.request.StudentCreationRequest;
 import jakarta.validation.Valid;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.shadcn.identity.dto.request.UserCreationRequest;
 import com.shadcn.identity.dto.response.ApiResponse;
 import com.shadcn.identity.dto.response.UserResponse;
 import com.shadcn.identity.service.IUserService;
@@ -29,18 +29,18 @@ public class UserController {
     IUserService userService;
 
     @PostMapping("/student/registration")
-    ApiResponse<UserResponse> createStudent(@RequestBody @Valid UserCreationRequest request) {
-        return ApiResponse.success(userService.createUser(request));
+    ApiResponse<UserResponse> createStudent(@RequestBody @Valid StudentCreationRequest request) {
+        return ApiResponse.success(userService.createStudent(request));
     }
 
     @PostMapping("/teacher/registration")
-    ApiResponse<UserResponse> createTeacher(@RequestBody @Valid UserCreationRequest request) {
-        return ApiResponse.success(userService.createUser(request));
+    ApiResponse<UserResponse> createTeacher(@RequestBody @Valid StudentCreationRequest request) {
+        return ApiResponse.success(userService.createStudent(request));
     }
 
     @PostMapping("/admin/registration")
-    ApiResponse<UserResponse> createAdmin(@RequestBody @Valid UserCreationRequest request) {
-        return ApiResponse.success(userService.createUser(request));
+    ApiResponse<UserResponse> createAdmin(@RequestBody @Valid StudentCreationRequest request) {
+        return ApiResponse.success(userService.createStudent(request));
     }
 
     @Operation(security = @SecurityRequirement(name = "bearerAuth"))
