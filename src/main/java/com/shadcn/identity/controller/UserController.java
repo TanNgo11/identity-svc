@@ -2,7 +2,9 @@ package com.shadcn.identity.controller;
 
 import static com.shadcn.identity.constant.PathConstant.API_V1_USERS;
 
+import com.shadcn.identity.dto.request.AdminCreationRequest;
 import com.shadcn.identity.dto.request.StudentCreationRequest;
+import com.shadcn.identity.dto.request.TeacherCreationRequest;
 import jakarta.validation.Valid;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,18 +36,20 @@ public class UserController {
     }
 
     @PostMapping("/teacher/registration")
-    ApiResponse<UserResponse> createTeacher(@RequestBody @Valid StudentCreationRequest request) {
-        return ApiResponse.success(userService.createStudent(request));
+    @PreAuthorize("hasRole('ADMIN')")
+    ApiResponse<UserResponse> createTeacher(@RequestBody @Valid TeacherCreationRequest request) {
+        return ApiResponse.success(userService.createTeacher(request));
     }
 
     @PostMapping("/admin/registration")
-    ApiResponse<UserResponse> createAdmin(@RequestBody @Valid StudentCreationRequest request) {
-        return ApiResponse.success(userService.createStudent(request));
+    @PreAuthorize("hasRole('ADMIN')")
+    ApiResponse<UserResponse> createAdmin(@RequestBody @Valid AdminCreationRequest request) {
+        return ApiResponse.success(userService.createAdmin(request));
     }
 
     @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/myInfo")
-    @PreAuthorize("hasRole('USER')||hasRole('ADMIN')||hasRole('STAFF')")
+    @PreAuthorize("hasRole('STUDENT')||hasRole('ADMIN')||hasRole('TEACHER')")
     ApiResponse<UserResponse> getMyInfo() {
         return ApiResponse.success(userService.getMyInfo());
     }
