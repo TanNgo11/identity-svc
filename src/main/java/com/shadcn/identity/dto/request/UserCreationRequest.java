@@ -2,6 +2,7 @@ package com.shadcn.identity.dto.request;
 
 import java.time.LocalDate;
 
+import com.shadcn.identity.enums.Role;
 import jakarta.validation.constraints.Size;
 
 import com.shadcn.identity.enums.Status;
@@ -38,4 +39,5 @@ public class UserCreationRequest {
     String address;
     String gender;
     String phoneNumber;
+    String role;
 }
