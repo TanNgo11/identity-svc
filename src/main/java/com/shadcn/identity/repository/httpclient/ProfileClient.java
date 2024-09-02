@@ -15,6 +15,12 @@ import com.shadcn.identity.dto.response.UserProfileResponse;
         url = "${app.services.profile}",
         configuration = {AuthenticationRequestInterceptor.class})
 public interface ProfileClient {
-    @PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
-    ApiResponse<UserProfileResponse> createProfile(@RequestBody ProfileCreationRequest request);
+    @PostMapping(value = "/api/v1/users/student", produces = MediaType.APPLICATION_JSON_VALUE)
+    ApiResponse<UserProfileResponse> createStudentProfile(@RequestBody ProfileCreationRequest request);
+
+    @PostMapping(value = "/api/v1/users/teacher", produces = MediaType.APPLICATION_JSON_VALUE)
+    ApiResponse<UserProfileResponse> createTeacherProfile(@RequestBody ProfileCreationRequest request);
+
+    @PostMapping(value = "/api/v1/users/admin", produces = MediaType.APPLICATION_JSON_VALUE)
+    ApiResponse<UserProfileResponse> createAdminProfile(@RequestBody ProfileCreationRequest request);
 }

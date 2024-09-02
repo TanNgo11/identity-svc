@@ -68,7 +68,7 @@ public class UserService implements IUserService {
 
         log.info("Creating profile: {}", profileCreationRequest);
 
-        var profileResponse = profileClient.createProfile(profileCreationRequest);
+        var profileResponse = profileClient.createStudentProfile(profileCreationRequest);
 
         log.info("Profile created: {}", profileResponse);
 
