@@ -1,22 +1,21 @@
 package com.shadcn.identity.dto.request;
 
-import java.time.LocalDate;
-
-import jakarta.validation.constraints.Size;
-
+import com.shadcn.identity.enums.Role;
 import com.shadcn.identity.enums.Status;
 import com.shadcn.identity.validator.DobConstraint;
 import com.shadcn.identity.validator.EmailConstraint;
-
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserCreationRequest {
+public class AdminCreationRequest {
     @Size(min = 8, max = 20, message = "USERNAME_INVALID")
     String username;
 
@@ -38,4 +37,7 @@ public class UserCreationRequest {
     String address;
     String gender;
     String phoneNumber;
+
+    @Builder.Default
+    Role role = Role.ADMIN;
 }

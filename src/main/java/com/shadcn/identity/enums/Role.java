@@ -1,7 +1,7 @@
 package com.shadcn.identity.enums;
 
 public enum Role {
-    USER,
+    STUDENT,
     ADMIN,
-    STAFF
+    TEACHER
 }

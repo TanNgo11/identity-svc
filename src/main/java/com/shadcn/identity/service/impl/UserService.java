@@ -1,10 +1,15 @@
 package com.shadcn.identity.service.impl;
 
-import com.shadcn.event.dto.NotificationEvent;
-import com.shadcn.identity.dto.request.UserCreationRequest;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.shadcn.identity.dto.request.StudentCreationRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.shadcn.identity.dto.response.UserResponse;
 import com.shadcn.identity.entity.User;
-import com.shadcn.identity.enums.Role;
 import com.shadcn.identity.enums.Status;
 import com.shadcn.identity.exception.AppException;
 import com.shadcn.identity.exception.ErrorCode;
@@ -14,19 +19,12 @@ import com.shadcn.identity.repository.RoleRepository;
 import com.shadcn.identity.repository.UserRepository;
 import com.shadcn.identity.repository.httpclient.ProfileClient;
 import com.shadcn.identity.service.IUserService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -40,11 +38,10 @@ public class UserService implements IUserService {
     PasswordEncoder BCryptPasswordEncoder;
     ProfileMapper profileMapper;
     ProfileClient profileClient;
-    KafkaTemplate<String, Object> kafkaTemplate;
-    TemplateEngine templateEngine;
+    NotificationService notificationService;
 
     @Override
-    public UserResponse createUser(UserCreationRequest request) {
+    public UserResponse createStudent(StudentCreationRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) throw new AppException(ErrorCode.USER_EXISTED);
 
         User user = userMapper.toUser(request);
@@ -53,16 +50,13 @@ public class UserService implements IUserService {
 
         user.setPassword(BCryptPasswordEncoder.encode(request.getPassword()));
 
+        log.info(request.getRole().toString());
+
         Set<com.shadcn.identity.entity.Role> roles = new HashSet<>();
         com.shadcn.identity.entity.Role userRole = roleRepository
-                .findByName(Role.USER.name())
-                .orElseGet(() -> {
-                    log.info("USER role not found. Creating it.");
-                    com.shadcn.identity.entity.Role role = new com.shadcn.identity.entity.Role();
-                    role.setName(Role.USER.name());
-                    role.setDescription("User role");
-                    return roleRepository.save(role);
-                });
+                .findByName(request.getRole().toString())
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
+
         roles.add(userRole);
         user.setRoles(roles);
         user = userRepository.save(user);
@@ -76,21 +70,22 @@ public class UserService implements IUserService {
 
         log.info("Profile created: {}", profileResponse);
 
-        Context context = new Context();
-        context.setVariable("name", request.getFirstName() + " " + request.getLastName());
-        context.setVariable("email", request.getEmail());
-        context.setVariable("verifyEmailLink", "http://localhost:8080/api/v1/users/verify-email?email=" + request.getEmail());
-
-        NotificationEvent notificationEvent = NotificationEvent.builder()
-                .channel("EMAIL")
-                .recipient(request.getEmail())
-                .subject("Welcome to our system")
-                .body(templateEngine.process("/template-email/index.html", context))
-                .build();
-
-        kafkaTemplate.send("notification-delivery", notificationEvent);
+        // Send notification after user created
+        notificationService.sendVerifyEmail(request, userEmailVerificationContext(request));
 
         return userMapper.toUserResponse(user);
+    }
+
+    @Override
+    public UserResponse createTeacher(StudentCreationRequest request) {
+        // TODO create teacher
+        return null;
+    }
+
+    @Override
+    public UserResponse createAdmin(StudentCreationRequest request) {
+        // TODO create admin
+        return null;
     }
 
     // Generate 6 digit random otp
@@ -111,7 +106,6 @@ public class UserService implements IUserService {
         return userResponse;
     }
 
-
     @Override
     public UserResponse verifyEmail(String email) {
         var user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -124,19 +118,19 @@ public class UserService implements IUserService {
         userRepository.save(user);
 
         // Send notification after email verified
-        StringBuilder sb = new StringBuilder();
-        sb.append("Hello, ").append(user.getUsername()).append(".\n")
-                .append("Your email has been verified successfully.");
-
-        NotificationEvent notificationEvent = NotificationEvent.builder()
-                .channel("EMAIL")
-                .recipient(user.getEmail())
-                .subject("Email Verified")
-                .body(sb.toString())
-                .build();
-
-        kafkaTemplate.send("notification-delivery", notificationEvent);
+        notificationService.sendVerifyEmailSuccess(email);
 
         return userMapper.toUserResponse(user);
+    }
+
+    public Context userEmailVerificationContext(StudentCreationRequest request) {
+        Context context = new Context();
+        context.setVariable("name", request.getFirstName() + " " + request.getLastName());
+        context.setVariable("email", request.getEmail());
+        context.setVariable(
+                "verifyEmailLink",
+                "http://localhost:8080/identity/api/v1/users/verify-email?email=" + request.getEmail());
+
+        return context;
     }
 }

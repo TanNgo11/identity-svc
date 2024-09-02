@@ -8,7 +8,7 @@ import org.mapstruct.MappingTarget;
 
 import com.shadcn.identity.dto.request.CreateSystemUserRequest;
 import com.shadcn.identity.dto.request.SystemUserUpdationRequest;
-import com.shadcn.identity.dto.request.UserCreationRequest;
+import com.shadcn.identity.dto.request.StudentCreationRequest;
 import com.shadcn.identity.dto.request.UserUpdationRequest;
 import com.shadcn.identity.dto.response.UserResponse;
 import com.shadcn.identity.entity.User;
@@ -16,7 +16,7 @@ import com.shadcn.identity.entity.User;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    User toUser(UserCreationRequest request);
+    User toUser(StudentCreationRequest request);
 
     @Mapping(target = "roles", source = "roles", ignore = true)
     User toUser(CreateSystemUserRequest request);
