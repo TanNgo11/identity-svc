@@ -28,35 +28,36 @@ public class PathConstant {
     public static final String API_V1_VNPAYMENT = API_V1 + VNPAYMENT;
 
     public static final String[] PUBLIC_AUTH_ENDPOINTS = {
-            API_V1_AUTH + "/token",
-            API_V1_AUTH + "/introspect",
-            API_V1_AUTH + "/logout",
-            API_V1_AUTH + "/refresh",
-            API_V1_AUTH + "/outbound/authenticate",
-
+        API_V1_AUTH + "/token",
+        API_V1_AUTH + "/introspect",
+        API_V1_AUTH + "/logout",
+        API_V1_AUTH + "/refresh",
+        API_V1_AUTH + "/outbound/authenticate",
     };
 
     public static final String[] PUBLIC_GET_ENDPOINTS = {
-            API_V1_PRODUCTS,
-            API_V1_PRODUCTS + "/category/{categoryName}",
-            API_V1_PRODUCTS + "/{id}",
-            API_V1_PRODUCTS + "/detail/{slug}",
-            API_V1_CATEGORY,
-            API_V1_CATEGORY + "/{categoryName}/products/count",
-            API_V1_CATEGORY,
-            API_V1_RATING,
-            "/ws/**",
-            "/actuator/**",
-            "/swagger-ui/**",
-            "/v3/api-docs/**",
-            API_V1_RATING + "/average/{productId}",
-            API_V1_RATING + "/{id}",
-            API_V1_COUPONS + "/code/{code}",
-            API_V1_VNPAYMENT + "/**",
+        API_V1_PRODUCTS,
+        API_V1_PRODUCTS + "/category/{categoryName}",
+        API_V1_PRODUCTS + "/{id}",
+        API_V1_PRODUCTS + "/detail/{slug}",
+        API_V1_CATEGORY,
+        API_V1_CATEGORY + "/{categoryName}/products/count",
+        API_V1_CATEGORY,
+        API_V1_RATING,
+        "/ws/**",
+        "/actuator/**",
+        "/swagger-ui/**",
+        "/v3/api-docs/**",
+        API_V1_RATING + "/average/{productId}",
+        API_V1_RATING + "/{id}",
+        API_V1_COUPONS + "/code/{code}",
+        API_V1_VNPAYMENT + "/**",
     };
 
     public static final String[] PUBLIC_POST_ENDPOINTS = {
-            API_V1_USERS + "/registration",
-            API_V1_USERS + "/verify-email?email={email}",
+        API_V1_USERS + "/student/registration",
+        API_V1_USERS + "/teacher/registration",
+        API_V1_USERS + "/admin/registration",
+        API_V1_USERS + "/verify-email/**",
     };
 }
