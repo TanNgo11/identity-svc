@@ -3,15 +3,15 @@ package com.shadcn.identity.service.impl;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.shadcn.identity.dto.request.AdminCreationRequest;
+import com.shadcn.identity.dto.request.StudentCreationRequest;
+import com.shadcn.identity.dto.request.TeacherCreationRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.shadcn.event.dto.NotificationEvent;
-import com.shadcn.identity.dto.request.UserCreationRequest;
 import com.shadcn.identity.dto.response.UserResponse;
 import com.shadcn.identity.entity.User;
-import com.shadcn.identity.enums.Role;
 import com.shadcn.identity.enums.Status;
 import com.shadcn.identity.exception.AppException;
 import com.shadcn.identity.exception.ErrorCode;
@@ -43,20 +43,20 @@ public class UserService implements IUserService {
     NotificationService notificationService;
 
     @Override
-    public UserResponse createUser(UserCreationRequest request) {
+    public UserResponse createStudent(StudentCreationRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) throw new AppException(ErrorCode.USER_EXISTED);
 
-        User user = userMapper.toUser(request);
+        User user = userMapper.toStudent(request);
 
         if (user.getStatus() == Status.INACTIVE) throw new AppException(ErrorCode.USER_INACTIVE);
 
         user.setPassword(BCryptPasswordEncoder.encode(request.getPassword()));
 
-        log.info(request.getRole());
+        log.info(request.getRole().toString());
 
         Set<com.shadcn.identity.entity.Role> roles = new HashSet<>();
         com.shadcn.identity.entity.Role userRole = roleRepository
-                .findByName(request.getRole())
+                .findByName(request.getRole().toString())
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
 
         roles.add(userRole);
@@ -76,6 +76,18 @@ public class UserService implements IUserService {
         notificationService.sendVerifyEmail(request, userEmailVerificationContext(request));
 
         return userMapper.toUserResponse(user);
+    }
+
+    @Override
+    public UserResponse createTeacher(TeacherCreationRequest request) {
+        // TODO create teacher
+        return null;
+    }
+
+    @Override
+    public UserResponse createAdmin(AdminCreationRequest request) {
+        // TODO create admin
+        return null;
     }
 
     // Generate 6 digit random otp
@@ -113,7 +125,7 @@ public class UserService implements IUserService {
         return userMapper.toUserResponse(user);
     }
 
-    public Context userEmailVerificationContext(UserCreationRequest request) {
+    public Context userEmailVerificationContext(StudentCreationRequest request) {
         Context context = new Context();
         context.setVariable("name", request.getFirstName() + " " + request.getLastName());
         context.setVariable("email", request.getEmail());

@@ -10,7 +10,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import com.shadcn.event.dto.NotificationEvent;
-import com.shadcn.identity.dto.request.UserCreationRequest;
+import com.shadcn.identity.dto.request.StudentCreationRequest;
 import com.shadcn.identity.service.INotificationService;
 
 @Service
@@ -23,7 +23,7 @@ public class NotificationService implements INotificationService {
     TemplateEngine templateEngine;
 
     @Override
-    public void sendVerifyEmail(UserCreationRequest request, Context context) {
+    public void sendVerifyEmail(StudentCreationRequest request, Context context) {
         NotificationEvent notificationEvent = NotificationEvent.builder()
                 .channel("EMAIL")
                 .recipient(request.getEmail())
