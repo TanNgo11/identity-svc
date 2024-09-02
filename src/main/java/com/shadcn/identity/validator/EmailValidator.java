@@ -1,9 +1,9 @@
 package com.shadcn.identity.validator;
 
+import java.util.regex.Pattern;
+
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-
-import java.util.regex.Pattern;
 
 public class EmailValidator implements ConstraintValidator<EmailConstraint, String> {
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
