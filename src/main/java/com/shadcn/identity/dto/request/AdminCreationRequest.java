@@ -1,14 +1,16 @@
 package com.shadcn.identity.dto.request;
 
+import java.time.LocalDate;
+
+import jakarta.validation.constraints.Size;
+
 import com.shadcn.identity.enums.Role;
 import com.shadcn.identity.enums.Status;
 import com.shadcn.identity.validator.DobConstraint;
 import com.shadcn.identity.validator.EmailConstraint;
-import jakarta.validation.constraints.Size;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor

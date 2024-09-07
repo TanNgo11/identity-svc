@@ -36,4 +36,7 @@ public class User extends BaseEntity {
 
     @ManyToMany
     Set<Role> roles = new HashSet<>();
+
+    @OneToOne(mappedBy = "user")
+    ResetPasswordToken resetPasswordToken;
 }

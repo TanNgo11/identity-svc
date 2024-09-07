@@ -2,11 +2,11 @@ package com.shadcn.identity.mapper;
 
 import java.util.List;
 
-import com.shadcn.identity.dto.request.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import com.shadcn.identity.dto.request.*;
 import com.shadcn.identity.dto.response.UserResponse;
 import com.shadcn.identity.entity.User;
 

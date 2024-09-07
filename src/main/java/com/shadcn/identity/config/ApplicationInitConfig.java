@@ -43,11 +43,11 @@ public class ApplicationInitConfig {
                     return roleRepository.save(role);
                 }));
 
-                roles.add(roleRepository.findByName("USER").orElseGet(() -> {
-                    log.info("USER role not found. Creating it.");
+                roles.add(roleRepository.findByName("STUDENT").orElseGet(() -> {
+                    log.info("STUDENT role not found. Creating it.");
                     com.shadcn.identity.entity.Role role = new com.shadcn.identity.entity.Role();
-                    role.setName("USER");
-                    role.setDescription("User role");
+                    role.setName("STUDENT");
+                    role.setDescription("STUDENT role");
                     return roleRepository.save(role);
                 }));
 
@@ -64,7 +64,6 @@ public class ApplicationInitConfig {
                 ApplicationInitConfig.log.warn(
                         "admin user has been created with default password: admin, please change it");
             }
-            //            emailSender.sendTestEmail();
         };
     }
 }
