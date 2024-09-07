@@ -1,17 +1,18 @@
 package com.shadcn.identity.service.impl;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import com.shadcn.event.dto.NotificationEvent;
-import com.shadcn.identity.dto.request.StudentCreationRequest;
+import com.shadcn.identity.dto.request.*;
 import com.shadcn.identity.service.INotificationService;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -23,10 +24,11 @@ public class NotificationService implements INotificationService {
     TemplateEngine templateEngine;
 
     @Override
-    public void sendVerifyEmail(StudentCreationRequest request, Context context) {
+    public void sendVerifyEmail(String email, Context context) {
+
         NotificationEvent notificationEvent = NotificationEvent.builder()
                 .channel("EMAIL")
-                .recipient(request.getEmail())
+                .recipient(email)
                 .subject("Welcome to our system")
                 .body(templateEngine.process("/template-email/index.html", context))
                 .build();
@@ -46,4 +48,14 @@ public class NotificationService implements INotificationService {
         kafkaTemplate.send("notification-delivery", notificationEvent);
     }
 
+    @Override
+    public void sendResetPasswordEmail(String email, Context context) {
+        NotificationEvent notificationEvent = NotificationEvent.builder()
+                .channel("EMAIL")
+                .recipient(email)
+                .subject("Reset password")
+                .body(templateEngine.process("/template-forgot-password/index.html", context))
+                .build();
+        kafkaTemplate.send("notification-delivery", notificationEvent);
+    }
 }

@@ -27,8 +27,8 @@ public enum ErrorCode {
     NOTIFICATION_NOT_EXISTED(1016, "Notification code not existed", HttpStatus.BAD_REQUEST),
     USER_INACTIVE(1017, "User have been deleted", HttpStatus.BAD_REQUEST),
     PAYMENT_FAILED(1018, "Payment failed", HttpStatus.BAD_REQUEST),
-    EMAIL_ALREADY_VERIFIED(1019, "Email already verified", HttpStatus.BAD_REQUEST);
-
+    EMAIL_ALREADY_VERIFIED(1019, "Email already verified", HttpStatus.BAD_REQUEST),
+    INVALID_OR_EXPIRED_TOKEN(1020, "Invalid or expired token", HttpStatus.BAD_REQUEST);
     private int code;
     private String message;
     private HttpStatusCode statusCode;

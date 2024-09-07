@@ -1,25 +1,21 @@
 package com.shadcn.identity.controller;
 
-import static com.shadcn.identity.constant.PathConstant.API_V1_USERS;
+import static com.shadcn.identity.constant.PathConstant.*;
 
-import com.shadcn.identity.dto.request.AdminCreationRequest;
-import com.shadcn.identity.dto.request.StudentCreationRequest;
-import com.shadcn.identity.dto.request.TeacherCreationRequest;
-import jakarta.validation.Valid;
+import jakarta.validation.*;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.*;
 import org.springframework.web.bind.annotation.*;
 
-import com.shadcn.identity.dto.response.ApiResponse;
-import com.shadcn.identity.dto.response.UserResponse;
-import com.shadcn.identity.service.IUserService;
+import com.shadcn.identity.dto.request.*;
+import com.shadcn.identity.dto.response.*;
+import com.shadcn.identity.service.*;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
+import io.swagger.v3.oas.annotations.*;
+import io.swagger.v3.oas.annotations.security.*;
+import lombok.*;
+import lombok.experimental.*;
+import lombok.extern.slf4j.*;
 
 @RestController
 @RequestMapping(API_V1_USERS)
@@ -56,7 +52,19 @@ public class UserController {
 
     @GetMapping("/verify-email")
     public ApiResponse<UserResponse> verifyEmail(@RequestParam("email") String email) {
-        log.info("Verify email: {}", email);
+        //        log.info("Verify email: {}", email);
         return ApiResponse.success(userService.verifyEmail(email));
+    }
+
+    @PostMapping("/forgot-password")
+    public ApiResponse<Void> resetPassword(@RequestBody @Valid UserForgotPasswordRequest request) {
+        userService.forgotPassword(request);
+        return ApiResponse.empty();
+    }
+
+    @PostMapping("/reset-password")
+    public ApiResponse<Void> updatePassword(@RequestBody @Valid UserResetPasswordRequest request) {
+        userService.resetPassword(request);
+        return ApiResponse.empty();
     }
 }

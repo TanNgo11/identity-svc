@@ -59,5 +59,7 @@ public class PathConstant {
         API_V1_USERS + "/teacher/registration",
         API_V1_USERS + "/admin/registration",
         API_V1_USERS + "/verify-email/**",
+        API_V1_USERS + "/forgot-password",
+        API_V1_USERS + "/reset-password",
     };
 }
