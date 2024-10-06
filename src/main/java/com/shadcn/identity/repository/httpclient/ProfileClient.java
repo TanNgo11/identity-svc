@@ -1,5 +1,6 @@
 package com.shadcn.identity.repository.httpclient;
 
+import com.shadcn.identity.service.impl.RetreiveMessageErrorDecoder;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +14,7 @@ import com.shadcn.identity.dto.response.UserProfileResponse;
 @FeignClient(
         name = "profile-service",
         url = "${app.services.profile}",
-        configuration = {AuthenticationRequestInterceptor.class})
+        configuration = {AuthenticationRequestInterceptor.class, RetreiveMessageErrorDecoder.class})
 public interface ProfileClient {
     @PostMapping(value = "/api/v1/users/student", produces = MediaType.APPLICATION_JSON_VALUE)
     ApiResponse<UserProfileResponse> createStudentProfile(@RequestBody ProfileCreationRequest request);
