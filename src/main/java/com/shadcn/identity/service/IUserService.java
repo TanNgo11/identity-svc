@@ -17,4 +17,6 @@ public interface IUserService {
     void resetPassword(UserResetPasswordRequest request);
 
     UserResponse verifyEmail(String email);
+
+    void changeUserStatus(String username, StatusUpdateRequest request);
 }
