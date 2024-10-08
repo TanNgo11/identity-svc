@@ -209,4 +209,15 @@ public class UserService implements IUserService {
 
         return context;
     }
+
+    @Override
+    public void changeUserStatus(String username, StatusUpdateRequest request) {
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        var status = request.getStatus();
+
+        user.setStatus(status);
+        userRepository.save(user);
+    }
 }

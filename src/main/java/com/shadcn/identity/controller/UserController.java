@@ -67,4 +67,11 @@ public class UserController {
         userService.resetPassword(request);
         return ApiResponse.empty();
     }
+
+    @PatchMapping("/status/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Void> changeStatus(@PathVariable String username, @RequestBody StatusUpdateRequest request) {
+        userService.changeUserStatus(username, request);
+        return ApiResponse.empty();
+    }
 }
