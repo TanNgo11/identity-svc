@@ -1,7 +1,6 @@
 package com.shadcn.identity.exception;
 
 import com.shadcn.identity.dto.response.ApiResponse;
-import com.shadcn.identity.util.BadRequestException;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

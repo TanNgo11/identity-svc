@@ -1,4 +1,4 @@
-package com.shadcn.identity.util;
+package com.shadcn.identity.exception;
 
 
 import lombok.Getter;
