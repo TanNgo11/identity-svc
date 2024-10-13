@@ -1,6 +1,6 @@
 package com.shadcn.identity.repository.httpclient;
 
-import com.shadcn.identity.service.impl.RetreiveMessageErrorDecoder;
+import com.shadcn.identity.exception.RetreiveMessageErrorDecoder;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;

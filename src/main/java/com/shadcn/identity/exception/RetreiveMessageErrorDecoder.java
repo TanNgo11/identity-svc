@@ -1,4 +1,4 @@
-package com.shadcn.identity.service.impl;
+package com.shadcn.identity.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shadcn.identity.entity.ExceptionMessage;
