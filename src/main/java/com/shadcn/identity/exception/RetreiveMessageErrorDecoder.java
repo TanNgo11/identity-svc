@@ -2,8 +2,6 @@ package com.shadcn.identity.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shadcn.identity.entity.ExceptionMessage;
-import com.shadcn.identity.util.BadRequestException;
-import com.shadcn.identity.util.NotFoundException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import lombok.extern.slf4j.Slf4j;
