@@ -2,6 +2,7 @@ package com.shadcn.identity.dto.request;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,8 +15,11 @@ public class ProfileCreationRequest {
     String userId;
     String firstName;
     String lastName;
-    // @JsonSerialize(using = LocalDateSerializer.class)
+
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
     LocalDate dateOfBirth;
+    
     String address;
     String email;
     String phoneNumber;

@@ -52,13 +52,13 @@ public class PathConstant {
         API_V1_RATING + "/{id}",
         API_V1_COUPONS + "/code/{code}",
         API_V1_VNPAYMENT + "/**",
+            API_V1_USERS + "/verify-email/**",
     };
 
     public static final String[] PUBLIC_POST_ENDPOINTS = {
         API_V1_USERS + "/student/registration",
         API_V1_USERS + "/teacher/registration",
         API_V1_USERS + "/admin/registration",
-        API_V1_USERS + "/verify-email/**",
         API_V1_USERS + "/forgot-password",
         API_V1_USERS + "/reset-password",
     };
