@@ -1,4 +1,4 @@
-package com.shadcn.identity.entity;
+package com.shadcn.identity.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
