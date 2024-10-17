@@ -1,14 +1,15 @@
 package com.shadcn.identity.service;
 
 import com.shadcn.identity.dto.request.*;
+import com.shadcn.identity.dto.response.UserProfileResponse;
 import com.shadcn.identity.dto.response.UserResponse;
 
 public interface IUserService {
-    UserResponse createStudent(StudentCreationRequest request);
+    void createStudent(StudentCreationRequest request);
 
-    UserResponse createTeacher(TeacherCreationRequest request);
+    void createTeacher(TeacherCreationRequest request);
 
-    UserResponse createAdmin(AdminCreationRequest request);
+    void createAdmin(AdminCreationRequest request);
 
     UserResponse getMyInfo();
 
@@ -19,4 +20,7 @@ public interface IUserService {
     UserResponse verifyEmail(String email);
 
     void changeUserStatus(String username, StatusUpdateRequest request);
+
+    UserProfileResponse getUserInfo(String username);
 }
+    

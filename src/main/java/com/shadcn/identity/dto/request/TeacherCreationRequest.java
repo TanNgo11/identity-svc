@@ -28,7 +28,7 @@ public class TeacherCreationRequest {
     String firstName;
     String lastName;
 
-    @DobConstraint(min = 10, message = "INVALID_DOB")
+
     @JsonFormat(pattern = "dd-MM-yyyy")        
     LocalDate dateOfBirth;
 

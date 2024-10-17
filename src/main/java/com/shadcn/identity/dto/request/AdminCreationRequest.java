@@ -2,6 +2,7 @@ package com.shadcn.identity.dto.request;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Size;
 
 import com.shadcn.identity.enums.Role;
@@ -27,7 +28,7 @@ public class AdminCreationRequest {
     String firstName;
     String lastName;
 
-    @DobConstraint(min = 10, message = "INVALID_DOB")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     LocalDate dateOfBirth;
 
     @EmailConstraint

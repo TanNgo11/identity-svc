@@ -51,6 +51,14 @@ public class ApplicationInitConfig {
                     return roleRepository.save(role);
                 }));
 
+                roles.add(roleRepository.findByName("TEACHER").orElseGet(() -> {
+                    log.info("TEACHER role not found. Creating it.");
+                    com.shadcn.identity.entity.Role role = new com.shadcn.identity.entity.Role();
+                    role.setName("TEACHER");
+                    role.setDescription("TEACHER role");
+                    return roleRepository.save(role);
+                }));
+
                 // orElseThrow(()->new AppException(ErrorCode.ROLE_NOT_EXISTED))
                 User user = User.builder()
                         .emailVerified(true)

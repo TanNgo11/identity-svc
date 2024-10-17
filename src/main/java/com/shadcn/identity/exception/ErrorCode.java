@@ -29,7 +29,9 @@ public enum ErrorCode {
     PAYMENT_FAILED(1018, "Payment failed", HttpStatus.BAD_REQUEST),
     EMAIL_ALREADY_VERIFIED(1019, "Email already verified", HttpStatus.BAD_REQUEST),
     INVALID_OR_EXPIRED_TOKEN(1020, "Invalid or expired token", HttpStatus.BAD_REQUEST),
-    PHONE_EXISTED(1023, "Phone number existed", HttpStatus.BAD_REQUEST);
+    PHONE_EXISTED(1023, "Phone number existed", HttpStatus.BAD_REQUEST),
+    EMAIL_EXISTED(1024, "Email existed", HttpStatus.BAD_REQUEST),
+    EMAIL_NOT_EXISTED(1024, "Email not existed", HttpStatus.BAD_REQUEST);
     private int code;
     private String message;
     private HttpStatusCode statusCode;
