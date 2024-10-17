@@ -1,15 +1,13 @@
 package com.shadcn.identity.repository.httpclient;
 
+import com.shadcn.identity.dto.response.*;
 import com.shadcn.identity.exception.RetreiveMessageErrorDecoder;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.shadcn.identity.config.AuthenticationRequestInterceptor;
 import com.shadcn.identity.dto.request.ProfileCreationRequest;
-import com.shadcn.identity.dto.response.ApiResponse;
-import com.shadcn.identity.dto.response.UserProfileResponse;
 
 @FeignClient(
         name = "profile-service",
@@ -17,11 +15,21 @@ import com.shadcn.identity.dto.response.UserProfileResponse;
         configuration = {AuthenticationRequestInterceptor.class, RetreiveMessageErrorDecoder.class})
 public interface ProfileClient {
     @PostMapping(value = "/api/v1/users/student", produces = MediaType.APPLICATION_JSON_VALUE)
-    ApiResponse<UserProfileResponse> createStudentProfile(@RequestBody ProfileCreationRequest request);
+    ApiResponse<Void> createStudentProfile(@RequestBody ProfileCreationRequest request);
 
     @PostMapping(value = "/api/v1/users/teacher", produces = MediaType.APPLICATION_JSON_VALUE)
-    ApiResponse<UserProfileResponse> createTeacherProfile(@RequestBody ProfileCreationRequest request);
+    ApiResponse<Void> createTeacherProfile(@RequestBody ProfileCreationRequest request);
 
     @PostMapping(value = "/api/v1/users/admin", produces = MediaType.APPLICATION_JSON_VALUE)
-    ApiResponse<UserProfileResponse> createAdminProfile(@RequestBody ProfileCreationRequest request);
+    ApiResponse<Void> createAdminProfile(@RequestBody ProfileCreationRequest request);
+
+    @GetMapping(value = "/api/v1/users/student/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    ApiResponse<StudentProfileResponse> getStudentProfile(@PathVariable String username);
+
+    @GetMapping(value = "/api/v1/users/teacher/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    ApiResponse<TeacherProfileResponse> getTeacherProfile(@PathVariable String username);
+
+    @GetMapping(value = "/api/v1/users/admin/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    ApiResponse<AdminProfileResponse> getAdminProfile(@PathVariable String username);
+
 }

@@ -27,20 +27,24 @@ public class UserController {
     IUserService userService;
 
     @PostMapping("/student/registration")
-    ApiResponse<UserResponse> createStudent(@RequestBody @Valid StudentCreationRequest request) {
-        return ApiResponse.success(userService.createStudent(request));
+    ApiResponse<Void> createStudent(@RequestBody @Valid StudentCreationRequest request) {
+        userService.createStudent(request);
+        return ApiResponse.empty();
+
     }
 
     @PostMapping("/teacher/registration")
     @PreAuthorize("hasRole('ADMIN')")
-    ApiResponse<UserResponse> createTeacher(@RequestBody @Valid TeacherCreationRequest request) {
-        return ApiResponse.success(userService.createTeacher(request));
+    ApiResponse<Void> createTeacher(@RequestBody @Valid TeacherCreationRequest request) {
+        userService.createTeacher(request);
+        return ApiResponse.empty();
     }
 
     @PostMapping("/admin/registration")
     @PreAuthorize("hasRole('ADMIN')")
-    ApiResponse<UserResponse> createAdmin(@RequestBody @Valid AdminCreationRequest request) {
-        return ApiResponse.success(userService.createAdmin(request));
+    ApiResponse<Void> createAdmin(@RequestBody @Valid AdminCreationRequest request) {
+        userService.createAdmin(request);
+        return ApiResponse.empty();
     }
 
     @Operation(security = @SecurityRequirement(name = "bearerAuth"))
@@ -73,5 +77,11 @@ public class UserController {
     public ApiResponse<Void> changeStatus(@PathVariable String username, @RequestBody StatusUpdateRequest request) {
         userService.changeUserStatus(username, request);
         return ApiResponse.empty();
+    }
+
+    @GetMapping("/myInfo/{username}")
+    @PreAuthorize("hasRole('STUDENT')||hasRole('ADMIN')||hasRole('TEACHER')")
+    public ApiResponse<UserProfileResponse> getUserInfo(@PathVariable String username) {
+        return ApiResponse.success(userService.getUserInfo(username));
     }
 }

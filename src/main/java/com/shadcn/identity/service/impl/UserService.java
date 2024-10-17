@@ -2,6 +2,7 @@ package com.shadcn.identity.service.impl;
 
 import java.time.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import jakarta.transaction.*;
 
@@ -41,32 +42,35 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public UserResponse createStudent(StudentCreationRequest request) {
+    public void createStudent(StudentCreationRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) throw new AppException(ErrorCode.USER_EXISTED);
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) throw new AppException(ErrorCode.EMAIL_EXISTED);
         User user = userMapper.toStudent(request);
-        user = prepareAndSaveUser(user, request.getPassword(), request.getRole().toString());
+        user = prepareAndSaveUser(user, request.getPassword(), com.shadcn.identity.enums.Role.STUDENT.toString());
 
-        var profileCreationRequest = profileMapper.toStudentProfileCreationRequest(request);
+        ProfileCreationRequest profileCreationRequest = profileMapper.toStudentProfileCreationRequest(request);
         profileCreationRequest.setUserId(String.valueOf(user.getId()));
-
+        profileCreationRequest.setUsername(user.getUsername());
         profileClient.createStudentProfile(profileCreationRequest);
         notificationService.sendVerifyEmail(
                 request.getEmail(),
                 userEmailVerificationContext(request.getFirstName(), request.getLastName(), request.getEmail()));
 
-        return userMapper.toUserResponse(user);
     }
 
     @Override
     @Transactional
-    public UserResponse createTeacher(TeacherCreationRequest teacherCreationRequest) {
+    public void createTeacher(TeacherCreationRequest teacherCreationRequest) {
         if (userRepository.existsByUsername(teacherCreationRequest.getUsername()))
             throw new AppException(ErrorCode.USER_EXISTED);
+        if (userRepository.findByEmail(teacherCreationRequest.getEmail()).isPresent())
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
         User user = userMapper.toTeacher(teacherCreationRequest);
         user = prepareAndSaveUser(
                 user,
                 teacherCreationRequest.getPassword(),
-                teacherCreationRequest.getRole().toString());
+                com.shadcn.identity.enums.Role.TEACHER.toString());
+
         ProfileCreationRequest profileCreationRequest =
                 profileMapper.toTeacherProfileCreationRequest(teacherCreationRequest);
         profileCreationRequest.setUserId(String.valueOf(user.getId()));
@@ -77,14 +81,14 @@ public class UserService implements IUserService {
                         teacherCreationRequest.getFirstName(),
                         teacherCreationRequest.getLastName(),
                         teacherCreationRequest.getEmail()));
-        return userMapper.toUserResponse(user);
     }
 
     @Override
     @Transactional
-    public UserResponse createAdmin(AdminCreationRequest request) {
+    public void createAdmin(AdminCreationRequest request) {
         // TODO create admin
         if (userRepository.existsByUsername(request.getUsername())) throw new AppException(ErrorCode.USER_EXISTED);
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) throw new AppException(ErrorCode.EMAIL_EXISTED);
         User user = userMapper.toAdmin(request);
         user = prepareAndSaveUser(user, request.getPassword(), request.getRole().toString());
         ProfileCreationRequest profileCreationRequest = profileMapper.toAdminProfileCreationRequest(request);
@@ -92,14 +96,13 @@ public class UserService implements IUserService {
         notificationService.sendVerifyEmail(
                 request.getEmail(),
                 userEmailVerificationContext(request.getFirstName(), request.getLastName(), request.getEmail()));
-        return userMapper.toUserResponse(user);
     }
 
     private User prepareAndSaveUser(User user, String password, String roleName) {
         if (user.getStatus() == Status.INACTIVE) throw new AppException(ErrorCode.USER_INACTIVE);
         user.setPassword(BCryptPasswordEncoder.encode(password));
-        Set<com.shadcn.identity.entity.Role> roles = new HashSet<>();
-        com.shadcn.identity.entity.Role userRole =
+        Set<Role> roles = new HashSet<>();
+        Role userRole =
                 roleRepository.findByName(roleName).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
         roles.add(userRole);
         user.setRoles(roles);
@@ -177,7 +180,7 @@ public class UserService implements IUserService {
 
     @Override
     public UserResponse verifyEmail(String email) {
-        var user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        var user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
 
         if (user.isEmailVerified()) throw new AppException(ErrorCode.EMAIL_ALREADY_VERIFIED);
         else {
@@ -212,12 +215,29 @@ public class UserService implements IUserService {
 
     @Override
     public void changeUserStatus(String username, StatusUpdateRequest request) {
-        var user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        var user =
+                userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         var status = request.getStatus();
 
         user.setStatus(status);
         userRepository.save(user);
+    }
+
+    @Override
+    public UserProfileResponse getUserInfo(String username) {
+
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        Set<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+
+        return switch (roles.iterator().next()) {
+            case "STUDENT" -> profileClient.getStudentProfile(username).getResult();
+            case "TEACHER" -> profileClient.getTeacherProfile(username).getResult();
+            case "ADMIN" -> profileClient.getAdminProfile(username).getResult();
+
+            default -> throw new IllegalStateException("Unexpected value: " + roles.iterator().next());
+        };
+
     }
 }
