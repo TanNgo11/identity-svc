@@ -14,13 +14,13 @@ import com.shadcn.identity.dto.request.ProfileCreationRequest;
         url = "${app.services.profile}",
         configuration = {AuthenticationRequestInterceptor.class, RetreiveMessageErrorDecoder.class})
 public interface ProfileClient {
-    @PostMapping(value = "/api/v1/users/student", produces = MediaType.APPLICATION_JSON_VALUE)
-    ApiResponse<Void> createStudentProfile(@RequestBody ProfileCreationRequest request);
+    @PostMapping(value = "/api/v1/users/student", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+        ApiResponse<Void> createStudentProfile(@ModelAttribute ProfileCreationRequest request);
 
-    @PostMapping(value = "/api/v1/users/teacher", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/api/v1/users/teacher", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     ApiResponse<Void> createTeacherProfile(@RequestBody ProfileCreationRequest request);
 
-    @PostMapping(value = "/api/v1/users/admin", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/api/v1/users/admin", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     ApiResponse<Void> createAdminProfile(@RequestBody ProfileCreationRequest request);
 
     @GetMapping(value = "/api/v1/users/student/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
