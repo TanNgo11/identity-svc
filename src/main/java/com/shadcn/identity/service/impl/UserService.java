@@ -214,15 +214,18 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void changeUserStatus(String username, StatusUpdateRequest request) {
-        var user =
-                userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-
-        var status = request.getStatus();
-
-        user.setStatus(status);
-        userRepository.save(user);
+    public void changeListUserStatus(StatusUpdateRequest request) {
+        List<Long> ids = request.getIds();
+        ids.stream()
+                .map(userRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .forEach(user -> {
+                    user.setStatus(request.getStatus());
+                    userRepository.save(user);
+                });
     }
+
 
     @Override
     public UserProfileResponse getUserInfo() {

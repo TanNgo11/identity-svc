@@ -12,7 +12,7 @@ import com.shadcn.identity.entity.Role;
 import com.shadcn.identity.entity.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
 
     Optional<User> findByUsername(String username);
@@ -26,8 +26,6 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query("SELECT u FROM User u JOIN FETCH u.roles r WHERE r.name = :roleName")
     List<User> findAllWithRoles(@Param("roleName") String roleName);
-
-    User findById(Long userId);
 
     @Query("SELECT u FROM User u WHERE u.id IN :ids")
     List<User> findUsersByIds(List<Long> ids);
