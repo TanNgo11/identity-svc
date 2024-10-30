@@ -1,21 +1,23 @@
 package com.shadcn.identity.controller;
 
-import static com.shadcn.identity.constant.PathConstant.*;
-
-import jakarta.validation.*;
-
-import org.springframework.security.access.prepost.*;
+import com.shadcn.identity.dto.request.*;
+import com.shadcn.identity.dto.response.ApiResponse;
+import com.shadcn.identity.dto.response.UserProfileResponse;
+import com.shadcn.identity.dto.response.UserResponse;
+import com.shadcn.identity.service.IUserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.shadcn.identity.dto.request.*;
-import com.shadcn.identity.dto.response.*;
-import com.shadcn.identity.service.*;
+import java.util.List;
 
-import io.swagger.v3.oas.annotations.*;
-import io.swagger.v3.oas.annotations.security.*;
-import lombok.*;
-import lombok.experimental.*;
-import lombok.extern.slf4j.*;
+import static com.shadcn.identity.constant.PathConstant.API_V1_USERS;
 
 @RestController
 @RequestMapping(API_V1_USERS)
@@ -72,10 +74,10 @@ public class UserController {
         return ApiResponse.empty();
     }
 
-    @PatchMapping("/status/{username}")
+    @PatchMapping("/status")
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<Void> changeStatus(@PathVariable String username, @RequestBody StatusUpdateRequest request) {
-        userService.changeUserStatus(username, request);
+    public ApiResponse<Void> changeUserStatusByIds(@RequestBody StatusUpdateRequest request) {
+        userService.changeListUserStatus(request);
         return ApiResponse.empty();
     }
 

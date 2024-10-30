@@ -4,6 +4,8 @@ import com.shadcn.identity.dto.request.*;
 import com.shadcn.identity.dto.response.UserProfileResponse;
 import com.shadcn.identity.dto.response.UserResponse;
 
+import java.util.List;
+
 public interface IUserService {
     void createStudent(StudentCreationRequest request);
 
@@ -19,7 +21,7 @@ public interface IUserService {
 
     UserResponse verifyEmail(String email);
 
-    void changeUserStatus(String username, StatusUpdateRequest request);
+    void changeListUserStatus( StatusUpdateRequest request);
 
     UserProfileResponse getUserInfo();
 }
