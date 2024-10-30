@@ -21,6 +21,6 @@ public interface IUserService {
 
     void changeUserStatus(String username, StatusUpdateRequest request);
 
-    UserProfileResponse getUserInfo(String username);
+    UserProfileResponse getUserInfo();
 }
     

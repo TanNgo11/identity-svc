@@ -225,7 +225,9 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserProfileResponse getUserInfo(String username) {
+    public UserProfileResponse getUserInfo() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info("Get user info: {}", username);
 
         User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
