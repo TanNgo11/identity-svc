@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
 @NoArgsConstructor

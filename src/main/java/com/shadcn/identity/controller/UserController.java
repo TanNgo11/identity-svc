@@ -79,9 +79,9 @@ public class UserController {
         return ApiResponse.empty();
     }
 
-    @GetMapping("/myInfo/{username}")
+    @GetMapping("/me")
     @PreAuthorize("hasRole('STUDENT')||hasRole('ADMIN')||hasRole('TEACHER')")
-    public ApiResponse<UserProfileResponse> getUserInfo(@PathVariable String username) {
-        return ApiResponse.success(userService.getUserInfo(username));
+    public ApiResponse<UserProfileResponse> getUserInfo() {
+        return ApiResponse.success(userService.getUserInfo());
     }
 }
