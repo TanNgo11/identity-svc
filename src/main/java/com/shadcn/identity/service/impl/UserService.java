@@ -50,12 +50,11 @@ public class UserService implements IUserService {
 
         ProfileCreationRequest profileCreationRequest = profileMapper.toStudentProfileCreationRequest(request);
         profileCreationRequest.setUserId(String.valueOf(user.getId()));
-        profileCreationRequest.setUsername(user.getUsername());
+
         profileClient.createStudentProfile(profileCreationRequest);
         notificationService.sendVerifyEmail(
                 request.getEmail(),
                 userEmailVerificationContext(request.getFirstName(), request.getLastName(), request.getEmail()));
-
     }
 
     @Override
@@ -67,9 +66,7 @@ public class UserService implements IUserService {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         User user = userMapper.toTeacher(teacherCreationRequest);
         user = prepareAndSaveUser(
-                user,
-                teacherCreationRequest.getPassword(),
-                com.shadcn.identity.enums.Role.TEACHER.toString());
+                user, teacherCreationRequest.getPassword(), com.shadcn.identity.enums.Role.TEACHER.toString());
 
         ProfileCreationRequest profileCreationRequest =
                 profileMapper.toTeacherProfileCreationRequest(teacherCreationRequest);
@@ -93,6 +90,7 @@ public class UserService implements IUserService {
         user = prepareAndSaveUser(user, request.getPassword(), request.getRole().toString());
         ProfileCreationRequest profileCreationRequest = profileMapper.toAdminProfileCreationRequest(request);
         profileCreationRequest.setUserId(String.valueOf(user.getId()));
+        profileClient.createAdminProfile(profileCreationRequest);
         notificationService.sendVerifyEmail(
                 request.getEmail(),
                 userEmailVerificationContext(request.getFirstName(), request.getLastName(), request.getEmail()));
@@ -226,13 +224,13 @@ public class UserService implements IUserService {
                 });
     }
 
-
     @Override
     public UserProfileResponse getUserInfo() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         log.info("Get user info: {}", username);
 
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user =
+                userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         Set<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
 
@@ -241,8 +239,8 @@ public class UserService implements IUserService {
             case "TEACHER" -> profileClient.getTeacherProfile(username).getResult();
             case "ADMIN" -> profileClient.getAdminProfile(username).getResult();
 
-            default -> throw new IllegalStateException("Unexpected value: " + roles.iterator().next());
+            default -> throw new IllegalStateException(
+                    "Unexpected value: " + roles.iterator().next());
         };
-
     }
 }

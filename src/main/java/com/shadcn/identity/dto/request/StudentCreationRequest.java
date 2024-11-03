@@ -2,9 +2,9 @@ package com.shadcn.identity.dto.request;
 
 import java.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.shadcn.identity.enums.Role;
 import com.shadcn.identity.enums.Status;
 import com.shadcn.identity.validator.DobConstraint;
@@ -19,18 +19,12 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StudentCreationRequest {
+    // Identity information
     @Size(min = 8, max = 20, message = "USERNAME_INVALID")
     String username;
 
     @Size(min = 8, max = 20, message = "INVALID_PASSWORD")
     String password;
-
-    String firstName;
-    String lastName;
-
-    @DobConstraint(min = 10, message = "INVALID_DOB")
-    @JsonFormat(pattern = "dd-MM-yyyy")        
-    LocalDate dateOfBirth;
 
     @EmailConstraint
     String email;
@@ -38,10 +32,38 @@ public class StudentCreationRequest {
     @Builder.Default
     Status status = Status.ACTIVE;
 
-    String address;
-    String gender;
-    String phoneNumber;
-
     @Builder.Default
     Role role = Role.STUDENT;
+
+    // Profile information
+    String firstName;
+
+    String lastName;
+
+    String address;
+
+    @DobConstraint(min = 10, message = "INVALID_DOB")
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    LocalDate dateOfBirth;
+
+    String phoneNumber;
+
+    String gender;
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    LocalDate enrollmentDate;
+
+    String departmentId;
+
+    String guardianName;
+
+    String guardianPhoneNumber;
+
+    String nationality;
+
+    String religion;
+
+    String degreeLevel;
+
+    String academicYearId;
 }
