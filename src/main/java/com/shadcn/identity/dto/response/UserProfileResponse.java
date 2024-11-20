@@ -1,6 +1,8 @@
 package com.shadcn.identity.dto.response;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -32,6 +34,8 @@ public class UserProfileResponse {
     @Enumerated(EnumType.STRING)
     Gender gender;
     String avatarPath;
+    
+    Set<String> roles;
 
 
 }
