@@ -33,6 +33,7 @@ public class UserService implements IUserService {
 
     UserRepository userRepository;
     UserMapper userMapper;
+    RoleMapper roleMapper;
     ResetPasswordTokenRepository resetPasswordTokenRepository;
     RoleRepository roleRepository;
     PasswordEncoder BCryptPasswordEncoder;
@@ -232,15 +233,19 @@ public class UserService implements IUserService {
         User user =
                 userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        Set<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+        Set<String> roleNames = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
 
-        return switch (roles.iterator().next()) {
+        UserProfileResponse userProfileResponse = switch (roleNames.iterator().next()) {
             case "STUDENT" -> profileClient.getStudentProfile(username).getResult();
             case "TEACHER" -> profileClient.getTeacherProfile(username).getResult();
             case "ADMIN" -> profileClient.getAdminProfile(username).getResult();
 
             default -> throw new IllegalStateException(
-                    "Unexpected value: " + roles.iterator().next());
+                    "Unexpected value: " + roleNames.iterator().next());
         };
+
+        userProfileResponse.setRoles(roleNames);
+        return userProfileResponse;
     }
 }
+

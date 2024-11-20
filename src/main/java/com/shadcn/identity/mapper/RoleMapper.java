@@ -7,6 +7,8 @@ import com.shadcn.identity.dto.request.RoleRequest;
 import com.shadcn.identity.dto.response.RoleResponse;
 import com.shadcn.identity.entity.Role;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
 
@@ -14,4 +16,7 @@ public interface RoleMapper {
     Role toRole(RoleRequest request);
 
     RoleResponse toRoleResponse(Role role);
+    
+    
+    
 }
