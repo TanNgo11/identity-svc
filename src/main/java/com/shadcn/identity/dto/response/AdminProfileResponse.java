@@ -1,14 +1,13 @@
 package com.shadcn.identity.dto.response;
 
+import java.time.LocalDate;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.shadcn.identity.enums.Gender;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-
-import java.time.LocalDate;
 
 @Data
 @SuperBuilder
@@ -64,5 +63,4 @@ public class AdminProfileResponse extends UserProfileResponse {
     Double salary;
 
     String officeHours;
-
 }

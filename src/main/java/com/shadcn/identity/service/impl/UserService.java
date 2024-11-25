@@ -6,9 +6,11 @@ import java.util.stream.Collectors;
 
 import jakarta.transaction.*;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.security.core.context.*;
 import org.springframework.security.crypto.password.*;
-import org.springframework.stereotype.*;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.*;
 
 import com.shadcn.identity.dto.request.*;
@@ -20,6 +22,9 @@ import com.shadcn.identity.mapper.*;
 import com.shadcn.identity.repository.*;
 import com.shadcn.identity.repository.httpclient.*;
 import com.shadcn.identity.service.*;
+import com.shadcn.identity.util.excel.ExcelUtils;
+import com.shadcn.identity.util.excel.FileFactory;
+import com.shadcn.identity.util.excel.ImportConfig;
 
 import lombok.*;
 import lombok.experimental.*;
@@ -40,6 +45,7 @@ public class UserService implements IUserService {
     ProfileMapper profileMapper;
     ProfileClient profileClient;
     INotificationService notificationService;
+    CourseClient deparmentsClient;
 
     @Override
     @Transactional
@@ -174,7 +180,7 @@ public class UserService implements IUserService {
         user.setPassword(BCryptPasswordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
         resetPasswordTokenRepository.delete(resetPasswordToken);
-        System.out.println(resetPasswordToken);
+      
     }
 
     @Override
@@ -235,17 +241,87 @@ public class UserService implements IUserService {
 
         Set<String> roleNames = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
 
-        UserProfileResponse userProfileResponse = switch (roleNames.iterator().next()) {
-            case "STUDENT" -> profileClient.getStudentProfile(username).getResult();
-            case "TEACHER" -> profileClient.getTeacherProfile(username).getResult();
-            case "ADMIN" -> profileClient.getAdminProfile(username).getResult();
+        UserProfileResponse userProfileResponse =
+                switch (roleNames.iterator().next()) {
+                    case "STUDENT" -> profileClient.getStudentProfile(username).getResult();
+                    case "TEACHER" -> profileClient.getTeacherProfile(username).getResult();
+                    case "ADMIN" -> profileClient.getAdminProfile(username).getResult();
 
-            default -> throw new IllegalStateException(
-                    "Unexpected value: " + roleNames.iterator().next());
-        };
+                    default -> throw new IllegalStateException(
+                            "Unexpected value: " + roleNames.iterator().next());
+                };
 
         userProfileResponse.setRoles(roleNames);
         return userProfileResponse;
     }
-}
 
+    @Override
+    @Transactional
+    public void importStudentDataFromExcel(MultipartFile importFile) {
+        Workbook workbook = FileFactory.getWorkbookStream(importFile);
+
+        List<StudentCreationRequest> studentRequests = ExcelUtils.getImportData(workbook, ImportConfig.studentImport);
+        List<DepartmentResponse> departmentCodes =
+                deparmentsClient.getAllDepartments().getResult();
+        List<AcademicYearResponse> academicYears =
+                deparmentsClient.getAllAcademicYears().getResult();
+
+        for (StudentCreationRequest request : studentRequests) {
+            String departmentCode = findDepartmentCode(departmentCodes, request.getDepartmentId());
+            int academicYear = findAcademicYear(academicYears);
+
+            String username =
+                    generateUniqueUsername(request.getFirstName(), request.getLastName(), departmentCode, academicYear);
+            String email = username + "@eiu.edu.vn";
+            String tempPassword = generateTempPassword();
+
+            request.setUsername(username);
+            request.setEmail(email);
+            request.setPassword(tempPassword);
+
+            createStudent(request);
+        }
+    }
+
+    private String findDepartmentCode(List<DepartmentResponse> departmentCodes, Long departmentId) {
+        return departmentCodes.stream()
+                .filter(department -> department.getId().equals(departmentId))
+                .findFirst()
+                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED))
+                .getDepartmentCode();
+    }
+
+    private int findAcademicYear(List<AcademicYearResponse> academicYears) {
+        return academicYears.stream()
+                .filter(year -> year.getStartYear().isBefore(LocalDate.now())
+                        && year.getEndYear().isAfter(LocalDate.now()))
+                .findFirst()
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND))
+                .getStartYear()
+                .getYear();
+    }
+
+    private String generateUniqueUsername(String firstName, String lastName, String departmentCode, int academicYear) {
+        String baseUsername =
+                firstName.toLowerCase() + "." + lastName.toLowerCase() + "." + departmentCode + academicYear;
+        String username = baseUsername;
+        int counter = 1;
+        while (userRepository.existsByUsername(username)) {
+            username = baseUsername + counter;
+            counter++;
+        }
+        return username;
+    }
+
+    private String generateTempPassword() {
+
+        int length = 8;
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        StringBuilder tempPassword = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            tempPassword.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return tempPassword.toString();
+    }
+}

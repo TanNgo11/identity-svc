@@ -1,23 +1,25 @@
 package com.shadcn.identity.controller;
 
+import static com.shadcn.identity.constant.PathConstant.API_V1_USERS;
+
+import jakarta.validation.Valid;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.shadcn.identity.dto.request.*;
 import com.shadcn.identity.dto.response.ApiResponse;
 import com.shadcn.identity.dto.response.UserProfileResponse;
 import com.shadcn.identity.dto.response.UserResponse;
 import com.shadcn.identity.service.IUserService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import static com.shadcn.identity.constant.PathConstant.API_V1_USERS;
 
 @RestController
 @RequestMapping(API_V1_USERS)
@@ -32,7 +34,6 @@ public class UserController {
     ApiResponse<Void> createStudent(@RequestBody @Valid StudentCreationRequest request) {
         userService.createStudent(request);
         return ApiResponse.empty();
-
     }
 
     @PostMapping("/teacher/registration")
@@ -85,5 +86,12 @@ public class UserController {
     @PreAuthorize("hasRole('STUDENT')||hasRole('ADMIN')||hasRole('TEACHER')")
     public ApiResponse<UserProfileResponse> getUserInfo() {
         return ApiResponse.success(userService.getUserInfo());
+    }
+
+    @PostMapping("/students/import")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Void> importCustomerData(@RequestParam("file") MultipartFile importFile) {
+        userService.importStudentDataFromExcel(importFile);
+        return ApiResponse.empty();
     }
 }

@@ -1,19 +1,12 @@
 package com.shadcn.identity.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import java.time.LocalDate;
 
-import com.shadcn.identity.enums.Gender;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-
-import java.time.LocalDate;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -23,7 +16,6 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StudentProfileResponse extends UserProfileResponse {
     String studentId;
-
 
     String grade;
 
@@ -53,6 +45,4 @@ public class StudentProfileResponse extends UserProfileResponse {
     String schoolYear;
 
     String present;
-
-
 }

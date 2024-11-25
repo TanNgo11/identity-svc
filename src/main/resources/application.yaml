@@ -71,3 +71,4 @@ jwt:
 app:
   services:
     profile: http://localhost:8081/profile
+    course: http://localhost:8083/course-svc

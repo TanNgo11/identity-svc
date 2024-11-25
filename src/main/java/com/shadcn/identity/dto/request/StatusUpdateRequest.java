@@ -1,12 +1,11 @@
 package com.shadcn.identity.dto.request;
 
+import java.util.List;
 
 import com.shadcn.identity.enums.Status;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor

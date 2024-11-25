@@ -1,10 +1,10 @@
 package com.shadcn.identity.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.shadcn.identity.dto.request.*;
 import com.shadcn.identity.dto.response.UserProfileResponse;
 import com.shadcn.identity.dto.response.UserResponse;
-
-import java.util.List;
 
 public interface IUserService {
     void createStudent(StudentCreationRequest request);
@@ -21,8 +21,9 @@ public interface IUserService {
 
     UserResponse verifyEmail(String email);
 
-    void changeListUserStatus( StatusUpdateRequest request);
+    void changeListUserStatus(StatusUpdateRequest request);
 
     UserProfileResponse getUserInfo();
+
+    void importStudentDataFromExcel(MultipartFile importFile);
 }
-    
