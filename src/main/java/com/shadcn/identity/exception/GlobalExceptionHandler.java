@@ -1,8 +1,10 @@
 package com.shadcn.identity.exception;
 
-import com.shadcn.identity.dto.response.ApiResponse;
+import java.util.Map;
+import java.util.Objects;
+
 import jakarta.validation.ConstraintViolation;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -10,8 +12,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.Map;
-import java.util.Objects;
+import com.shadcn.identity.dto.response.ApiResponse;
+
+import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
 @Slf4j
@@ -87,11 +90,12 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(apiResponse);
     }
+
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiResponse> handleBadRequestException(BadRequestException ex) {
         // Create an error response that includes both code and message
         ApiResponse errorResponse = ApiResponse.builder()
-                .code(ex.getCode())  // Use the code from BadRequestException
+                .code(ex.getCode()) // Use the code from BadRequestException
                 .message(ex.getMessage())
                 .build();
 

@@ -38,6 +38,8 @@ public class StudentCreationRequest {
     // Profile information
     String firstName;
 
+    String middleName;
+
     String lastName;
 
     String address;
@@ -53,7 +55,7 @@ public class StudentCreationRequest {
     @JsonFormat(pattern = "dd-MM-yyyy")
     LocalDate enrollmentDate;
 
-    String departmentId;
+    Long departmentId;
 
     String guardianName;
 
@@ -66,4 +68,6 @@ public class StudentCreationRequest {
     String degreeLevel;
 
     String academicYearId;
+
+    String citizenId;
 }

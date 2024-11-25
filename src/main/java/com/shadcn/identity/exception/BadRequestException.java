@@ -1,6 +1,5 @@
 package com.shadcn.identity.exception;
 
-
 import lombok.Getter;
 
 @Getter
@@ -12,5 +11,4 @@ public class BadRequestException extends RuntimeException {
         super(message);
         this.code = code;
     }
-
 }

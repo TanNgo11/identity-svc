@@ -52,7 +52,7 @@ public class PathConstant {
         API_V1_RATING + "/{id}",
         API_V1_COUPONS + "/code/{code}",
         API_V1_VNPAYMENT + "/**",
-            API_V1_USERS + "/verify-email/**",
+        API_V1_USERS + "/verify-email/**",
     };
 
     public static final String[] PUBLIC_POST_ENDPOINTS = {
