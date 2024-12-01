@@ -6,6 +6,8 @@ import com.shadcn.identity.dto.request.*;
 import com.shadcn.identity.dto.response.UserProfileResponse;
 import com.shadcn.identity.dto.response.UserResponse;
 
+import java.util.List;
+
 public interface IUserService {
     void createStudent(StudentCreationRequest request);
 
@@ -26,4 +28,9 @@ public interface IUserService {
     UserProfileResponse getUserInfo();
 
     void importStudentDataFromExcel(MultipartFile importFile);
+
+    void deleteTeachers(List<String> teacherIds);
+
+    void deleteTeacherById(String teacherId);
+
 }
