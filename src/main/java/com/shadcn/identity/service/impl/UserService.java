@@ -134,7 +134,7 @@ public class UserService implements IUserService {
 
     @Override
     public void forgotPassword(UserForgotPasswordRequest request) {
-        var user = userRepository
+        User user = userRepository
                 .findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         Long userId = user.getId();
@@ -180,12 +180,11 @@ public class UserService implements IUserService {
         user.setPassword(BCryptPasswordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
         resetPasswordTokenRepository.delete(resetPasswordToken);
-      
     }
 
     @Override
     public UserResponse verifyEmail(String email) {
-        var user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
 
         if (user.isEmailVerified()) throw new AppException(ErrorCode.EMAIL_ALREADY_VERIFIED);
         else {
@@ -281,6 +280,17 @@ public class UserService implements IUserService {
 
             createStudent(request);
         }
+    }
+
+    @Override
+    public void deleteTeachers(List<String> teacherIds) {
+        profileClient.deleteTeacherProfile(teacherIds);
+    }
+
+    @Override
+    public void deleteTeacherById(String teacherId) {
+        userRepository.deleteById(Long.parseLong(teacherId));
+        profileClient.deleteTeacherProfile(List.of(teacherId));
     }
 
     private String findDepartmentCode(List<DepartmentResponse> departmentCodes, Long departmentId) {

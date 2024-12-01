@@ -21,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
+
 @RestController
 @RequestMapping(API_V1_USERS)
 @RequiredArgsConstructor
@@ -92,6 +94,22 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> importCustomerData(@RequestParam("file") MultipartFile importFile) {
         userService.importStudentDataFromExcel(importFile);
+        return ApiResponse.empty();
+    }
+
+    @DeleteMapping("/teachers/delete")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Void> deleteTeacher(@RequestBody DeleteTeacherRequest request) {
+        log.info("Delete teacher: {}", request.getTeacherIds());
+        userService.deleteTeachers(request.getTeacherIds());
+        return ApiResponse.empty();
+    }
+
+    @DeleteMapping("/teachers/delete/{teacherId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Void> deleteTeacherById(@PathVariable String teacherId) {
+        log.info("Delete teacher by id: {}", teacherId);
+        userService.deleteTeacherById(teacherId);
         return ApiResponse.empty();
     }
 }

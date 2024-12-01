@@ -9,6 +9,8 @@ import com.shadcn.identity.dto.request.ProfileCreationRequest;
 import com.shadcn.identity.dto.response.*;
 import com.shadcn.identity.exception.RetreiveMessageErrorDecoder;
 
+import java.util.List;
+
 @FeignClient(
         name = "profile-service",
         url = "${app.services.profile}",
@@ -31,4 +33,10 @@ public interface ProfileClient {
 
     @GetMapping(value = "/api/v1/users/admin/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     ApiResponse<AdminProfileResponse> getAdminProfile(@PathVariable String username);
+
+    @DeleteMapping(value = "/api/v1/users/teachers/delete")
+    ApiResponse<Void> deleteTeacherProfile(@RequestBody List<String> teacherIds);
+
+    @DeleteMapping(value = "/api/v1/users/teachers/delete/{teacherId}")
+    ApiResponse<Void> deleteTeacherProfileById(@PathVariable String teacherId);
 }
