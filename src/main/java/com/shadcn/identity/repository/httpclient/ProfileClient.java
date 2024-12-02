@@ -39,4 +39,10 @@ public interface ProfileClient {
 
     @DeleteMapping(value = "/api/v1/users/teachers/delete/{teacherId}")
     ApiResponse<Void> deleteTeacherProfileById(@PathVariable String teacherId);
+
+    @PostMapping("/api/v1/users/students/usernames")
+    ApiResponse<List<StudentProfileResponse>> getAllStudentProfilesByUsernames(@RequestBody List<String> usernames);
+
+    @GetMapping("/api/v1/users/students/academic-year/{academicYearId}")
+    ApiResponse<List<StudentProfileResponse>> getAllStudentByAcademicYearId(@PathVariable("academicYearId") Long academicYearId);
 }

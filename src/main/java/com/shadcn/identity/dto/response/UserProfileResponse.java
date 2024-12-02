@@ -22,6 +22,7 @@ public class UserProfileResponse {
     String id;
     String firstName;
     String lastName;
+    String username;
 
     @JsonFormat(pattern = "dd-MM-yyyy")
     LocalDate dateOfBirth;
