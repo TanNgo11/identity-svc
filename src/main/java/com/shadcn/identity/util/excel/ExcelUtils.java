@@ -5,12 +5,20 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.shadcn.identity.dto.response.ExcelStudentResponse;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -19,6 +27,37 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class ExcelUtils {
+
+    //export config
+//    public static ByteArrayInputStream exportCustomer(List<Customer> customers, String fileName) throws Exception {
+//
+//        XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
+//
+//        //get file -> not found -> create file
+//        File file;
+//        FileInputStream fileInputStream;
+//
+//        try {
+//            file = ResourceUtils.getFile(PATH_TEMPLATE + fileName);
+//            fileInputStream = new FileInputStream(file);
+//        } catch (Exception e) {
+//            log.info("FILE NOT FOUND");
+//            file = FileFactory.createFile(fileName, xssfWorkbook);
+//            fileInputStream = new FileInputStream(file);
+//        }
+//
+//        processInsertData(xssfWorkbook, customers);
+//
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        xssfWorkbook.write(outputStream);
+//
+//        //close resource
+//        outputStream.close();
+//        fileInputStream.close();
+//
+//        log.info("done");
+//        return new ByteArrayInputStream(outputStream.toByteArray());
+//    }
 
     private static <T> String getCellValue(T data, CellConfig cellConfig, Class clazz) {
         String fieldName = cellConfig.getFieldName();
@@ -80,6 +119,127 @@ public class ExcelUtils {
         return list;
     }
 
+    private static void processInsertData(XSSFWorkbook xssfWorkbook, List<ExcelStudentResponse> customers){
+        //create freeze pane in excel file
+        XSSFSheet newSheet = xssfWorkbook.createSheet("sheet1");
+        newSheet.createFreezePane(4, 2, 4, 2);
+
+
+        //create font for title
+        XSSFFont titleFont = xssfWorkbook.createFont();
+        titleFont.setFontName("Arial");
+        titleFont.setBold(true);
+        titleFont.setFontHeightInPoints((short) 14);
+
+
+        //create style for cell of title and apply font to cell
+        XSSFCellStyle titleCellStyle = xssfWorkbook.createCellStyle();
+        titleCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        titleCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        titleCellStyle.setFillForegroundColor(IndexedColors.SKY_BLUE.index);
+        titleCellStyle.setBorderBottom(BorderStyle.MEDIUM);
+        titleCellStyle.setBorderLeft(BorderStyle.MEDIUM);
+        titleCellStyle.setBorderRight(BorderStyle.MEDIUM);
+        titleCellStyle.setBorderTop(BorderStyle.MEDIUM);
+        titleCellStyle.setFont(titleFont);
+        titleCellStyle.setWrapText(true);
+
+
+        //create font for data
+        XSSFFont dataFont = xssfWorkbook.createFont();
+        dataFont.setFontName("Arial");
+        dataFont.setBold(false);
+        dataFont.setFontHeightInPoints((short) 10);
+
+        //create style for cell data and apply font data to cell
+        XSSFCellStyle dataCellStyle = xssfWorkbook.createCellStyle();
+        dataCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        dataCellStyle.setBorderBottom(BorderStyle.THIN);
+        dataCellStyle.setBorderLeft(BorderStyle.THIN);
+        dataCellStyle.setBorderRight(BorderStyle.THIN);
+        dataCellStyle.setBorderTop(BorderStyle.THIN);
+        dataCellStyle.setFont(dataFont);
+        dataCellStyle.setWrapText(true);
+
+        //insert fieldName as title to excel
+        insertHeaderNameAsTitleToWorkbook(ExportConfig.studentsExport.getCellExportConfigList(), newSheet, titleCellStyle);
+
+
+        //insert data of fieldName to excel
+        insertDataToWorkbook(xssfWorkbook, ExportConfig.studentsExport, customers, dataCellStyle);
+        //return
+    }
+    private static <T> void insertDataToWorkbook(Workbook workbook, ExportConfig exportConfig, List<T> datas,
+                                                 XSSFCellStyle dataCellStyle) {
+        int startRowIndex = exportConfig.getStartRow();//2
+
+        int sheetIndex = exportConfig.getSheetIndex();//1
+
+        Class clazz = exportConfig.getDataClazz();
+
+        List<CellConfig> cellConfigs = exportConfig.getCellExportConfigList();
+
+        Sheet sheet = workbook.getSheetAt(sheetIndex);
+
+        int currentRowIndex = startRowIndex;
+
+        for (T data : datas) {
+            Row currentRow = sheet.getRow(currentRowIndex);
+            if (ObjectUtils.isEmpty(currentRow)) {
+                currentRow = sheet.createRow(currentRowIndex);
+            }
+            //insert data to row
+            insertDataToCell(data, currentRow, cellConfigs, clazz, sheet, dataCellStyle);
+            currentRowIndex++;
+        }
+    }
+    private static <T> void insertDataToCell(T data, Row currentRow, List<CellConfig> cellConfigs,
+                                             Class clazz, Sheet sheet, XSSFCellStyle dataStyle) {
+
+        for (CellConfig cellConfig : cellConfigs) {
+            Cell currentCell = currentRow.getCell(cellConfig.getColumnIndex());
+            if (ObjectUtils.isEmpty(currentCell)) {
+                currentCell = currentRow.createCell(cellConfig.getColumnIndex());
+            }
+
+            //get data for cell
+            String cellValue = getCellValue(data, cellConfig, clazz);
+
+            //set data
+            currentCell.setCellValue(cellValue);
+            sheet.autoSizeColumn(cellConfig.getColumnIndex());
+            currentCell.setCellStyle(dataStyle);
+        }
+
+    }
+
+    private static <T> void insertHeaderNameAsTitleToWorkbook(List<CellConfig> cellConfigs,
+                                                             Sheet sheet,
+                                                             XSSFCellStyle titleCellStyle) {
+
+        //title -> first row of excel -> get top row
+        int currentRow = sheet.getTopRow();
+
+        //create row
+        Row row = sheet.createRow(currentRow);
+        int i = 0;
+
+        //resize fix text in each cell
+        sheet.autoSizeColumn(currentRow);
+
+        //insert field name to cell
+        for (CellConfig cellConfig : cellConfigs) {
+            Cell currentCell = row.createCell(i);
+            String fieldName = cellConfig.getHeaderName();
+            currentCell.setCellValue(fieldName);
+            currentCell.setCellStyle(titleCellStyle);
+            sheet.autoSizeColumn(i);
+            i++;
+        }
+
+    }
+
+
     private static <T> T getRowData(Row row, List<CellConfig> cellConfigs, Class dataClazz) {
         T instance = null;
         try {
@@ -92,9 +252,15 @@ public class ExcelUtils {
 
                     Cell cell = row.getCell(currentCell.getColumnIndex());
                     if (!ObjectUtils.isEmpty(cell)) {
-                        cell.setCellType(CellType.STRING);
-
-                        Object cellValue = cell.getStringCellValue();
+                        Object cellValue;
+                        if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+                            Date date = cell.getDateCellValue();
+                            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                            cellValue = dateFormat.format(date);
+                        } else {
+                            cell.setCellType(CellType.STRING);
+                            cellValue = cell.getStringCellValue();
+                        }
 
                         setFieldValue(instance, field, cellValue);
                     }
@@ -111,7 +277,6 @@ public class ExcelUtils {
 
         return instance;
     }
-
     private static <T> void setFieldValue(Object instance, Field field, Object cellValue) {
         if (ObjectUtils.isEmpty(instance) || ObjectUtils.isEmpty(field)) {
             return;
@@ -186,6 +351,10 @@ public class ExcelUtils {
             case "BigDecimal":
                 cellValue = parseBigDecimal(cellValue);
                 break;
+                
+            case "LocalDate":
+                cellValue = parseLocalDate(cellValue);
+                break;
             default:
                 break;
         }
@@ -217,7 +386,7 @@ public class ExcelUtils {
     }
 
     private static Date parseDate(Object value) {
-        String[] formatsDate = {"yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy"};
+        String[] formatsDate = {"yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy", "dd-MM-yyyy"};
 
         if (ObjectUtils.isEmpty(value)) {
             return null;
@@ -233,7 +402,7 @@ public class ExcelUtils {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if (ObjectUtils.isEmpty(date)) {
+            if (date != null) {
                 return date;
             }
         }
@@ -244,6 +413,21 @@ public class ExcelUtils {
         } catch (Exception e) {
             e.printStackTrace();
             return new Date();
+        }
+    }
+
+    private static LocalDate parseLocalDate(Object value) {
+        if (ObjectUtils.isEmpty(value)) {
+            return null;
+        }
+
+        String dateStr = value.toString();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        try {
+            return LocalDate.parse(dateStr, formatter);
+        } catch (DateTimeParseException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

@@ -1,5 +1,6 @@
 package com.shadcn.identity.service;
 
+import com.shadcn.identity.dto.response.ExcelStudentResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.shadcn.identity.dto.request.*;
@@ -33,4 +34,6 @@ public interface IUserService {
 
     void deleteTeacherById(String teacherId);
 
+
+     List<ExcelStudentResponse> getAllStudentProfilesByAcademicYearId(Long academicYearId);
 }

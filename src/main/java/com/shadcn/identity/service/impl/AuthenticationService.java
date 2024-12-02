@@ -102,9 +102,9 @@ public class AuthenticationService implements IAuthenticationService {
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
-        boolean authenticated = passwordEncoder.matches(authenticationRequest.getPassword(), user.getPassword());
+        boolean authenticated = passwordEncoder.matches(authenticationRequest.getPassword(),  user.getPassword());
 
-        log.info("authenticated {} {} {}", authenticated, authenticationRequest.getPassword(), user.getPassword());
+        log.info("authenticated {} {} {}", authenticated, authenticationRequest.getPassword(),  user.getPassword());
 
         if (!authenticated) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);

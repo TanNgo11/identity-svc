@@ -21,8 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
-
 @RestController
 @RequestMapping(API_V1_USERS)
 @RequiredArgsConstructor
@@ -112,4 +110,27 @@ public class UserController {
         userService.deleteTeacherById(teacherId);
         return ApiResponse.empty();
     }
+
+//    @GetMapping("/students/export")
+//    public ResponseEntity<ApiResponse<Resource>> exportCustomer() throws Exception {
+//        List<ExcelStudentResponse> listStudents = userService.getAllStudentProfilesByAcademicYearId();
+//        if (!CollectionUtils.isEmpty(listStudents)) {
+//            String fileName = "Student Export" + ".xlsx";
+//
+//            ByteArrayInputStream in = ExcelUtils.(customerList, fileName);
+//
+//            InputStreamResource inputStreamResource = new InputStreamResource(in);
+//
+//            return ResponseEntity.ok()
+//                    .header(HttpHeaders.CONTENT_DISPOSITION,
+//                            "attachment; filename=" + URLEncoder.encode(fileName, StandardCharsets.UTF_8)
+//                    )
+//                    .contentType(MediaType.parseMediaType("application/vnd.ms-excel; charset=UTF-8"))
+//                    .body(inputStreamResource);
+//        } else {
+//            throw new Exception("No data");
+//
+//        }
+//    }
+
 }

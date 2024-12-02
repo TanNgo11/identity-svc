@@ -70,4 +70,6 @@ public class StudentCreationRequest {
     String academicYearId;
 
     String citizenId;
+    
+    String temporaryPassword;
 }
