@@ -40,3 +40,31 @@ INSERT INTO `users_roles` (`user_id`, `roles_name`) VALUES
     (69, 'ADMIN'),
     (70, 'ADMIN');
 
+
+INSERT INTO `users` (`id`, `created_by`, `createddate`, `modifiedby`, `modifieddate`, `email`, `email_verified`, `password`, `status`, `username`) VALUES
+    (80, 'admin', '2024-12-02 19:28:00.000000', 'admin', '2024-12-02 19:28:00.000000', 'giangvien6@example.com', 0, '$2a$10$w/1GcT9lGKZ27dvZ9KtKMOYN1Mttq5mEvX6bUpLyOwYQYZMOWZYOi', 'ACTIVE', 'giangvien6'),
+    (81, 'admin', '2024-12-02 19:28:00.000000', 'admin', '2024-12-02 19:28:00.000000', 'giangvien7@example.com', 0, '$2a$10$FJYlw2fKntcCc9eQDjG3B.i08/zOC0a1KHrBztVPa5xsKfWc1L/2i', 'ACTIVE', 'giangvien7'),
+    (82, 'admin', '2024-12-02 19:28:00.000000', 'admin', '2024-12-02 19:28:00.000000', 'giangvien8@example.com', 0, '$2a$10$G1XM9.pnE8nUEgT9HjjW3ulzF78htKL5nNu3ySgU1IXFQSz37kg2G', 'ACTIVE', 'giangvien8'),
+    (83, 'admin', '2024-12-02 19:28:00.000000', 'admin', '2024-12-02 19:28:00.000000', 'giangvien9@example.com', 0, '$2a$10$BL6Er9fiwN6O/C1vWnZCpeTY9Uw8jHo8X.gD9G4npksGxlPmQOYbm', 'ACTIVE', 'giangvien9'),
+    (84, 'admin', '2024-12-02 19:28:00.000000', 'admin', '2024-12-02 19:28:00.000000', 'giangvien10@example.com', 0, '$2a$10$UQ9VoHb/ko8VLyt6PnEgMuaeG1M7LnBd8zIbRNT0Qs/30Y83hr1JG', 'ACTIVE', 'giangvien10'),
+    (85, 'admin', '2024-12-02 19:28:00.000000', 'admin', '2024-12-02 19:28:00.000000', 'giangvien11@example.com', 0, '$2a$10$fEIrM/Wy1.LuLelZ92NS3OZ2f5IRBfc9vUld4CSuPG0PD7A2zJW4i', 'ACTIVE', 'giangvien11'),
+    (86, 'admin', '2024-12-02 19:28:00.000000', 'admin', '2024-12-02 19:28:00.000000', 'giangvien12@example.com', 0, '$2a$10$k7UNgoBL/8BN3F7GozlY6uJKUwo7hlz5ftJ35YE2C/OHQXdvEavwK', 'ACTIVE', 'giangvien12'),
+    (87, 'admin', '2024-12-02 19:28:00.000000', 'admin', '2024-12-02 19:28:00.000000', 'giangvien13@example.com', 0, '$2a$10$u9cfs5lo/eEOKVhzPlSHEeZpm8jLNTZ9G8E16ifAiFZ9wlDHjvY5y', 'ACTIVE', 'giangvien13'),
+    (88, 'admin', '2024-12-02 19:28:00.000000', 'admin', '2024-12-02 19:28:00.000000', 'giangvien14@example.com', 0, '$2a$10$5Yf7iS3Bi/nXDF1rH6vUJey5iPYKoMJWB.LHZwz1VlyDhmVG0my1a', 'ACTIVE', 'giangvien14'),
+    (89, 'admin', '2024-12-02 19:28:00.000000', 'admin', '2024-12-02 19:28:00.000000', 'giangvien15@example.com', 0, '$2a$10$1kLvCE9aHV9HgseJHcQ2buvNm7Ps8ctDFe8rAwNT/zXltnt06.g9S', 'ACTIVE', 'giangvien15');
+
+
+INSERT INTO `users_roles` (`user_id`, `roles_name`) VALUES
+    (80, 'TEACHER'),
+    (81, 'TEACHER'),
+    (82, 'TEACHER'),
+    (83, 'TEACHER'),
+    (84, 'TEACHER'),
+    (85, 'TEACHER'),
+    (86, 'TEACHER'),
+    (87, 'TEACHER'),
+    (88, 'TEACHER'),
+    (89, 'TEACHER');
+
+
+

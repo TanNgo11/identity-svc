@@ -1,5 +1,7 @@
 package com.shadcn.identity.repository.httpclient;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -8,8 +10,6 @@ import com.shadcn.identity.config.AuthenticationRequestInterceptor;
 import com.shadcn.identity.dto.request.ProfileCreationRequest;
 import com.shadcn.identity.dto.response.*;
 import com.shadcn.identity.exception.RetreiveMessageErrorDecoder;
-
-import java.util.List;
 
 @FeignClient(
         name = "profile-service",
@@ -44,5 +44,6 @@ public interface ProfileClient {
     ApiResponse<List<StudentProfileResponse>> getAllStudentProfilesByUsernames(@RequestBody List<String> usernames);
 
     @GetMapping("/api/v1/users/students/academic-year/{academicYearId}")
-    ApiResponse<List<StudentProfileResponse>> getAllStudentByAcademicYearId(@PathVariable("academicYearId") Long academicYearId);
+    ApiResponse<List<StudentProfileResponse>> getAllStudentByAcademicYearId(
+            @PathVariable("academicYearId") Long academicYearId);
 }

@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.shadcn.identity.dto.response.ExcelStudentResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -22,42 +21,45 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import com.shadcn.identity.dto.response.ExcelStudentResponse;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 public class ExcelUtils {
 
-    //export config
-//    public static ByteArrayInputStream exportCustomer(List<Customer> customers, String fileName) throws Exception {
-//
-//        XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
-//
-//        //get file -> not found -> create file
-//        File file;
-//        FileInputStream fileInputStream;
-//
-//        try {
-//            file = ResourceUtils.getFile(PATH_TEMPLATE + fileName);
-//            fileInputStream = new FileInputStream(file);
-//        } catch (Exception e) {
-//            log.info("FILE NOT FOUND");
-//            file = FileFactory.createFile(fileName, xssfWorkbook);
-//            fileInputStream = new FileInputStream(file);
-//        }
-//
-//        processInsertData(xssfWorkbook, customers);
-//
-//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//        xssfWorkbook.write(outputStream);
-//
-//        //close resource
-//        outputStream.close();
-//        fileInputStream.close();
-//
-//        log.info("done");
-//        return new ByteArrayInputStream(outputStream.toByteArray());
-//    }
+    // export config
+    //    public static ByteArrayInputStream exportCustomer(List<Customer> customers, String fileName) throws Exception
+    // {
+    //
+    //        XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
+    //
+    //        //get file -> not found -> create file
+    //        File file;
+    //        FileInputStream fileInputStream;
+    //
+    //        try {
+    //            file = ResourceUtils.getFile(PATH_TEMPLATE + fileName);
+    //            fileInputStream = new FileInputStream(file);
+    //        } catch (Exception e) {
+    //            log.info("FILE NOT FOUND");
+    //            file = FileFactory.createFile(fileName, xssfWorkbook);
+    //            fileInputStream = new FileInputStream(file);
+    //        }
+    //
+    //        processInsertData(xssfWorkbook, customers);
+    //
+    //        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    //        xssfWorkbook.write(outputStream);
+    //
+    //        //close resource
+    //        outputStream.close();
+    //        fileInputStream.close();
+    //
+    //        log.info("done");
+    //        return new ByteArrayInputStream(outputStream.toByteArray());
+    //    }
 
     private static <T> String getCellValue(T data, CellConfig cellConfig, Class clazz) {
         String fieldName = cellConfig.getFieldName();
@@ -119,20 +121,18 @@ public class ExcelUtils {
         return list;
     }
 
-    private static void processInsertData(XSSFWorkbook xssfWorkbook, List<ExcelStudentResponse> customers){
-        //create freeze pane in excel file
+    private static void processInsertData(XSSFWorkbook xssfWorkbook, List<ExcelStudentResponse> customers) {
+        // create freeze pane in excel file
         XSSFSheet newSheet = xssfWorkbook.createSheet("sheet1");
         newSheet.createFreezePane(4, 2, 4, 2);
 
-
-        //create font for title
+        // create font for title
         XSSFFont titleFont = xssfWorkbook.createFont();
         titleFont.setFontName("Arial");
         titleFont.setBold(true);
         titleFont.setFontHeightInPoints((short) 14);
 
-
-        //create style for cell of title and apply font to cell
+        // create style for cell of title and apply font to cell
         XSSFCellStyle titleCellStyle = xssfWorkbook.createCellStyle();
         titleCellStyle.setAlignment(HorizontalAlignment.CENTER);
         titleCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
@@ -144,14 +144,13 @@ public class ExcelUtils {
         titleCellStyle.setFont(titleFont);
         titleCellStyle.setWrapText(true);
 
-
-        //create font for data
+        // create font for data
         XSSFFont dataFont = xssfWorkbook.createFont();
         dataFont.setFontName("Arial");
         dataFont.setBold(false);
         dataFont.setFontHeightInPoints((short) 10);
 
-        //create style for cell data and apply font data to cell
+        // create style for cell data and apply font data to cell
         XSSFCellStyle dataCellStyle = xssfWorkbook.createCellStyle();
         dataCellStyle.setAlignment(HorizontalAlignment.CENTER);
         dataCellStyle.setBorderBottom(BorderStyle.THIN);
@@ -161,19 +160,20 @@ public class ExcelUtils {
         dataCellStyle.setFont(dataFont);
         dataCellStyle.setWrapText(true);
 
-        //insert fieldName as title to excel
-        insertHeaderNameAsTitleToWorkbook(ExportConfig.studentsExport.getCellExportConfigList(), newSheet, titleCellStyle);
+        // insert fieldName as title to excel
+        insertHeaderNameAsTitleToWorkbook(
+                ExportConfig.studentsExport.getCellExportConfigList(), newSheet, titleCellStyle);
 
-
-        //insert data of fieldName to excel
+        // insert data of fieldName to excel
         insertDataToWorkbook(xssfWorkbook, ExportConfig.studentsExport, customers, dataCellStyle);
-        //return
+        // return
     }
-    private static <T> void insertDataToWorkbook(Workbook workbook, ExportConfig exportConfig, List<T> datas,
-                                                 XSSFCellStyle dataCellStyle) {
-        int startRowIndex = exportConfig.getStartRow();//2
 
-        int sheetIndex = exportConfig.getSheetIndex();//1
+    private static <T> void insertDataToWorkbook(
+            Workbook workbook, ExportConfig exportConfig, List<T> datas, XSSFCellStyle dataCellStyle) {
+        int startRowIndex = exportConfig.getStartRow(); // 2
+
+        int sheetIndex = exportConfig.getSheetIndex(); // 1
 
         Class clazz = exportConfig.getDataClazz();
 
@@ -188,13 +188,14 @@ public class ExcelUtils {
             if (ObjectUtils.isEmpty(currentRow)) {
                 currentRow = sheet.createRow(currentRowIndex);
             }
-            //insert data to row
+            // insert data to row
             insertDataToCell(data, currentRow, cellConfigs, clazz, sheet, dataCellStyle);
             currentRowIndex++;
         }
     }
-    private static <T> void insertDataToCell(T data, Row currentRow, List<CellConfig> cellConfigs,
-                                             Class clazz, Sheet sheet, XSSFCellStyle dataStyle) {
+
+    private static <T> void insertDataToCell(
+            T data, Row currentRow, List<CellConfig> cellConfigs, Class clazz, Sheet sheet, XSSFCellStyle dataStyle) {
 
         for (CellConfig cellConfig : cellConfigs) {
             Cell currentCell = currentRow.getCell(cellConfig.getColumnIndex());
@@ -202,32 +203,30 @@ public class ExcelUtils {
                 currentCell = currentRow.createCell(cellConfig.getColumnIndex());
             }
 
-            //get data for cell
+            // get data for cell
             String cellValue = getCellValue(data, cellConfig, clazz);
 
-            //set data
+            // set data
             currentCell.setCellValue(cellValue);
             sheet.autoSizeColumn(cellConfig.getColumnIndex());
             currentCell.setCellStyle(dataStyle);
         }
-
     }
 
-    private static <T> void insertHeaderNameAsTitleToWorkbook(List<CellConfig> cellConfigs,
-                                                             Sheet sheet,
-                                                             XSSFCellStyle titleCellStyle) {
+    private static <T> void insertHeaderNameAsTitleToWorkbook(
+            List<CellConfig> cellConfigs, Sheet sheet, XSSFCellStyle titleCellStyle) {
 
-        //title -> first row of excel -> get top row
+        // title -> first row of excel -> get top row
         int currentRow = sheet.getTopRow();
 
-        //create row
+        // create row
         Row row = sheet.createRow(currentRow);
         int i = 0;
 
-        //resize fix text in each cell
+        // resize fix text in each cell
         sheet.autoSizeColumn(currentRow);
 
-        //insert field name to cell
+        // insert field name to cell
         for (CellConfig cellConfig : cellConfigs) {
             Cell currentCell = row.createCell(i);
             String fieldName = cellConfig.getHeaderName();
@@ -236,9 +235,7 @@ public class ExcelUtils {
             sheet.autoSizeColumn(i);
             i++;
         }
-
     }
-
 
     private static <T> T getRowData(Row row, List<CellConfig> cellConfigs, Class dataClazz) {
         T instance = null;
@@ -277,6 +274,7 @@ public class ExcelUtils {
 
         return instance;
     }
+
     private static <T> void setFieldValue(Object instance, Field field, Object cellValue) {
         if (ObjectUtils.isEmpty(instance) || ObjectUtils.isEmpty(field)) {
             return;
@@ -351,7 +349,7 @@ public class ExcelUtils {
             case "BigDecimal":
                 cellValue = parseBigDecimal(cellValue);
                 break;
-                
+
             case "LocalDate":
                 cellValue = parseLocalDate(cellValue);
                 break;

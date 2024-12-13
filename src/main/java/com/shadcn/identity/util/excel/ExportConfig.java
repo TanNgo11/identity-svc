@@ -1,13 +1,13 @@
 package com.shadcn.identity.util.excel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.shadcn.identity.dto.response.ExcelStudentResponse;
-import com.shadcn.identity.dto.response.StudentProfileResponse;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -23,7 +23,7 @@ public class ExportConfig {
 
     public static final ExportConfig studentsExport;
 
-    static{
+    static {
         studentsExport = new ExportConfig();
         studentsExport.setSheetIndex(0);
         studentsExport.setStartRow(1);
@@ -46,9 +46,9 @@ public class ExportConfig {
         studentCellConfig.add(new CellConfig(13, "nationality", "Nationality"));
         studentCellConfig.add(new CellConfig(14, "religion", "Religion"));
         studentCellConfig.add(new CellConfig(15, "degreeLevel", "Degree Level"));
-        studentCellConfig.add(new CellConfig(16, "username", "Username")); 
-        studentCellConfig.add(new CellConfig(17, "password", "Password")); 
-        studentCellConfig.add(new CellConfig(18, "email", "Email")); 
+        studentCellConfig.add(new CellConfig(16, "username", "Username"));
+        studentCellConfig.add(new CellConfig(17, "password", "Password"));
+        studentCellConfig.add(new CellConfig(18, "email", "Email"));
 
         studentsExport.setCellExportConfigList(studentCellConfig);
     }

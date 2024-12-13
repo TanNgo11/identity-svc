@@ -1,13 +1,13 @@
 package com.shadcn.identity.service;
 
-import com.shadcn.identity.dto.response.ExcelStudentResponse;
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import com.shadcn.identity.dto.request.*;
+import com.shadcn.identity.dto.response.ExcelStudentResponse;
 import com.shadcn.identity.dto.response.UserProfileResponse;
 import com.shadcn.identity.dto.response.UserResponse;
-
-import java.util.List;
 
 public interface IUserService {
     void createStudent(StudentCreationRequest request);
@@ -34,6 +34,5 @@ public interface IUserService {
 
     void deleteTeacherById(String teacherId);
 
-
-     List<ExcelStudentResponse> getAllStudentProfilesByAcademicYearId(Long academicYearId);
+    List<ExcelStudentResponse> getAllStudentProfilesByAcademicYearId(Long academicYearId);
 }

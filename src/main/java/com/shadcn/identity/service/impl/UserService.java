@@ -134,7 +134,7 @@ public class UserService implements IUserService {
 
     @Override
     public void forgotPassword(UserForgotPasswordRequest request) {
-        var user = userRepository
+        User user = userRepository
                 .findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         Long userId = user.getId();
@@ -180,12 +180,11 @@ public class UserService implements IUserService {
         user.setPassword(BCryptPasswordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
         resetPasswordTokenRepository.delete(resetPasswordToken);
-      
     }
 
     @Override
     public UserResponse verifyEmail(String email) {
-        var user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
 
         if (user.isEmailVerified()) throw new AppException(ErrorCode.EMAIL_ALREADY_VERIFIED);
         else {
@@ -296,20 +295,23 @@ public class UserService implements IUserService {
 
     @Override
     public List<ExcelStudentResponse> getAllStudentProfilesByAcademicYearId(Long academicYearId) {
-//        List<StudentProfileResponse> studentProfiles =
-//                profileClient.getAllStudentByAcademicYearId(academicYearId).getResult();
-//
-//        List<String> usernames = studentProfiles.stream().map(StudentProfileResponse::getUsername).collect(Collectors.toList());
-//
-//        List<User> users = userRepository.findAllByUsernameIn(usernames);
-//
-//        List<ExcelStudentResponse> result = userMapper.toExcelStudentResponseList(studentProfiles);
-//
-//        Map<String, String> usernameToPasswordMap = users.stream()
-//                .collect(Collectors.toMap(User::getUsername, User::getPassword));
-//
-//        result.forEach(excelStudentResponse ->
-//                excelStudentResponse.setPassword(usernameToPasswordMap.get(excelStudentResponse.getUsername())));
+        // List<StudentProfileResponse> studentProfiles =
+        // profileClient.getAllStudentByAcademicYearId(academicYearId).getResult();
+        //
+        // List<String> usernames =
+        // studentProfiles.stream().map(StudentProfileResponse::getUsername).collect(Collectors.toList());
+        //
+        // List<User> users = userRepository.findAllByUsernameIn(usernames);
+        //
+        // List<ExcelStudentResponse> result =
+        // userMapper.toExcelStudentResponseList(studentProfiles);
+        //
+        // Map<String, String> usernameToPasswordMap = users.stream()
+        // .collect(Collectors.toMap(User::getUsername, User::getPassword));
+        //
+        // result.forEach(excelStudentResponse ->
+        //
+        // excelStudentResponse.setPassword(usernameToPasswordMap.get(excelStudentResponse.getUsername())));
 
         return null;
     }
