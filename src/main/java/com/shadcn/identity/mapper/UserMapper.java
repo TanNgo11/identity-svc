@@ -2,13 +2,13 @@ package com.shadcn.identity.mapper;
 
 import java.util.List;
 
-import com.shadcn.identity.dto.response.ExcelStudentResponse;
-import com.shadcn.identity.dto.response.StudentProfileResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import com.shadcn.identity.dto.request.*;
+import com.shadcn.identity.dto.response.ExcelStudentResponse;
+import com.shadcn.identity.dto.response.StudentProfileResponse;
 import com.shadcn.identity.dto.response.UserResponse;
 import com.shadcn.identity.entity.User;
 
@@ -39,16 +39,9 @@ public interface UserMapper {
 
     List<UserResponse> toUserResponseList(List<User> allUsers);
 
-
     @Mapping(target = "password", ignore = true)
     ExcelStudentResponse toExcelStudentResponse(StudentProfileResponse studentProfileResponse);
-    
+
     @Mapping(target = "password", ignore = true)
     List<ExcelStudentResponse> toExcelStudentResponseList(List<StudentProfileResponse> studentProfileResponses);
-    
-    
-    
-    
-    
-    
 }

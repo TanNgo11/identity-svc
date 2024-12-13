@@ -15,5 +15,4 @@ public class ExcelStudentResponse extends StudentProfileResponse {
     String username;
 
     String password;
-
 }
