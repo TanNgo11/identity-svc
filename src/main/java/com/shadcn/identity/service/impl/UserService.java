@@ -316,6 +316,23 @@ public class UserService implements IUserService {
         return null;
     }
 
+    @Override
+    public void deleteStudents(DeleteStudentRequest request) {
+        List<String> missingUsers = new ArrayList<>();
+
+        for(String username : request.getStudentUsernames()) {
+            userRepository.findByUsername(username).ifPresentOrElse( userRepository::delete,
+                    () -> missingUsers.add(username)
+            );
+        }
+
+        if (!missingUsers.isEmpty()) {
+            log.warn("Student profiles not found for IDs: {}", missingUsers);
+        }
+
+        profileClient.deleteStudents(request.getStudentUsernames());
+    }
+
     private String findDepartmentCode(List<DepartmentResponse> departmentCodes, Long departmentId) {
         return departmentCodes.stream()
                 .filter(department -> department.getId().equals(departmentId))
