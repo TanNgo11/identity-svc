@@ -35,4 +35,6 @@ public interface IUserService {
     void deleteTeacherById(String teacherId);
 
     List<ExcelStudentResponse> getAllStudentProfilesByAcademicYearId(Long academicYearId);
+
+    void deleteStudents(DeleteStudentRequest request);
 }

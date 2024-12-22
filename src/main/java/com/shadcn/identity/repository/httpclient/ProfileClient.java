@@ -46,4 +46,7 @@ public interface ProfileClient {
     @GetMapping("/api/v1/users/students/academic-year/{academicYearId}")
     ApiResponse<List<StudentProfileResponse>> getAllStudentByAcademicYearId(
             @PathVariable("academicYearId") Long academicYearId);
+
+    @DeleteMapping("/api/v1/users/students/delete")
+    ApiResponse<Void> deleteStudents(@RequestBody List<String> studentUsernames);
 }

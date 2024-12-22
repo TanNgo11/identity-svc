@@ -111,6 +111,14 @@ public class UserController {
         return ApiResponse.empty();
     }
 
+    @DeleteMapping("/students/delete")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Void> deleteStudents(@RequestBody DeleteStudentRequest request) {
+        log.info("Delete student: {}", request.getStudentUsernames());
+        userService.deleteStudents(request);
+        return ApiResponse.empty();
+    }
+
     //    @GetMapping("/students/export")
     //    public ResponseEntity<ApiResponse<Resource>> exportCustomer() throws Exception {
     //        List<ExcelStudentResponse> listStudents = userService.getAllStudentProfilesByAcademicYearId();
