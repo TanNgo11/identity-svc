@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
@@ -17,32 +19,26 @@ import lombok.experimental.SuperBuilder;
 public class StudentProfileResponse extends UserProfileResponse {
     String studentId;
 
-    String grade;
+    String middleName;
+
+    String gpa;
 
     @JsonFormat(pattern = "dd-MM-yyyy")
     LocalDate enrollmentDate;
 
-    String major;
+    String departmentId;
 
     String guardianName;
 
     String guardianPhoneNumber;
 
-    String email;
-
-    String avatarPath;
-    // 54 dân tộc :)))
-    String nation;
+    String nationality;
 
     String religion;
 
-    String citizenId;
-    // At the moment just have Information technology and Business Administration
-    String faculty;
-    // Ex: Đại học chính quy Tiếng Việt K10
     String degreeLevel;
 
-    String schoolYear;
+    String academicYearId;
 
     String present;
 }
