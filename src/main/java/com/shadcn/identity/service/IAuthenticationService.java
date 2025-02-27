@@ -3,10 +3,7 @@ package com.shadcn.identity.service;
 import java.text.ParseException;
 
 import com.nimbusds.jose.JOSEException;
-import com.shadcn.identity.dto.request.AuthenticationRequest;
-import com.shadcn.identity.dto.request.IntrospectRequest;
-import com.shadcn.identity.dto.request.LogoutRequest;
-import com.shadcn.identity.dto.request.RefreshRequest;
+import com.shadcn.identity.dto.request.*;
 import com.shadcn.identity.dto.response.AuthenticationResponse;
 import com.shadcn.identity.dto.response.IntrospectResponse;
 import com.shadcn.identity.entity.User;
@@ -22,6 +19,7 @@ public interface IAuthenticationService {
 
     AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException;
 
+    String changePassword(ChangePasswordRequest request);
     //    AuthenticationResponse OutboundAuthenticate(String code);
 
 }

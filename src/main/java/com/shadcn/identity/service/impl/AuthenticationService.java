@@ -7,9 +7,11 @@ import java.util.Date;
 import java.util.StringJoiner;
 import java.util.UUID;
 
+import com.shadcn.identity.dto.request.*;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,6 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.shadcn.identity.dto.request.AuthenticationRequest;
-import com.shadcn.identity.dto.request.IntrospectRequest;
-import com.shadcn.identity.dto.request.LogoutRequest;
-import com.shadcn.identity.dto.request.RefreshRequest;
 import com.shadcn.identity.dto.response.AuthenticationResponse;
 import com.shadcn.identity.dto.response.IntrospectResponse;
 import com.shadcn.identity.entity.InvalidatedToken;
@@ -261,6 +259,28 @@ public class AuthenticationService implements IAuthenticationService {
                 .refreshToken(refreshToken)
                 .authenticated(true)
                 .build();
+    }
+
+    @Override
+    public String changePassword(ChangePasswordRequest request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info("Get user info: {}", username);
+
+        User user =
+                userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        boolean isMatchesOld = passwordEncoder.matches(request.getOldPassword(), user.getPassword());
+        boolean isMatchesNew = passwordEncoder.matches(request.getNewPassword(), user.getPassword());
+        if(isMatchesOld) {
+            if(isMatchesNew) {
+                throw new AppException(ErrorCode.MATCHED_NEW_PASSWORD);
+            }
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            userRepository.save(user);
+        } else {
+            throw new AppException(ErrorCode.NOT_MATCHED_OLD_PASSWORD);
+        }
+        return "Password updated";
     }
 
     //    @Override
