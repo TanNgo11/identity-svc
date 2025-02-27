@@ -249,7 +249,17 @@ public class UserService implements IUserService {
                     default -> throw new IllegalStateException(
                             "Unexpected value: " + roleNames.iterator().next());
                 };
+        userProfileResponse.setId(user.getId());
+        userProfileResponse.setRoles(roleNames);
+        return userProfileResponse;
+    }
 
+    @Override
+    public UserProfileResponse getStudentProfileById(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        Set<String> roleNames = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+        UserProfileResponse userProfileResponse = profileClient.getStudentProfile(user.getUsername()).getResult();;
+        userProfileResponse.setId(user.getId());
         userProfileResponse.setRoles(roleNames);
         return userProfileResponse;
     }
@@ -261,7 +271,7 @@ public class UserService implements IUserService {
 
         List<StudentCreationRequest> studentRequests = ExcelUtils.getImportData(workbook, ImportConfig.studentImport);
         List<DepartmentResponse> departmentCodes =
-                deparmentsClient.getAllDepartments().getResult();
+                deparmentsClient.getAllDepartments().getResult().getData() ;
         List<AcademicYearResponse> academicYears =
                 deparmentsClient.getAllAcademicYears().getResult();
 

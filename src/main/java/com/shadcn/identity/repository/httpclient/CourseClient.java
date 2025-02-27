@@ -2,6 +2,7 @@ package com.shadcn.identity.repository.httpclient;
 
 import java.util.List;
 
+import com.shadcn.identity.dto.response.PageResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ import com.shadcn.identity.exception.RetreiveMessageErrorDecoder;
         configuration = {AuthenticationRequestInterceptor.class, RetreiveMessageErrorDecoder.class})
 public interface CourseClient {
     @GetMapping(value = "/api/v1/departments", produces = MediaType.APPLICATION_JSON_VALUE)
-    ApiResponse<List<DepartmentResponse>> getAllDepartments();
+    ApiResponse<PageResponse<DepartmentResponse>> getAllDepartments();
 
     @GetMapping(value = "/api/v1/academic-years/all", produces = MediaType.APPLICATION_JSON_VALUE)
     ApiResponse<List<AcademicYearResponse>> getAllAcademicYears();
