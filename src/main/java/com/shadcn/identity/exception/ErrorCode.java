@@ -32,8 +32,9 @@ public enum ErrorCode {
     PHONE_EXISTED(1023, "Phone number existed", HttpStatus.BAD_REQUEST),
     EMAIL_EXISTED(1024, "Email existed", HttpStatus.BAD_REQUEST),
     EMAIL_NOT_EXISTED(1024, "Email not existed", HttpStatus.BAD_REQUEST),
-    DEPARTMENT_NOT_EXISTED(1025, "Department not existed", HttpStatus.BAD_REQUEST);
-
+    DEPARTMENT_NOT_EXISTED(1025, "Department not existed", HttpStatus.BAD_REQUEST),
+    MATCHED_NEW_PASSWORD(1026, "New password Can't same with old password", HttpStatus.BAD_REQUEST),
+    NOT_MATCHED_OLD_PASSWORD(1026, "Invalid old password", HttpStatus.BAD_REQUEST);
     private int code;
     private String message;
     private HttpStatusCode statusCode;

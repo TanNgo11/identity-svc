@@ -4,13 +4,10 @@ import static com.shadcn.identity.constant.PathConstant.API_V1_AUTH;
 
 import java.text.ParseException;
 
+import com.shadcn.identity.dto.request.*;
 import org.springframework.web.bind.annotation.*;
 
 import com.nimbusds.jose.JOSEException;
-import com.shadcn.identity.dto.request.AuthenticationRequest;
-import com.shadcn.identity.dto.request.IntrospectRequest;
-import com.shadcn.identity.dto.request.LogoutRequest;
-import com.shadcn.identity.dto.request.RefreshRequest;
 import com.shadcn.identity.dto.response.ApiResponse;
 import com.shadcn.identity.dto.response.AuthenticationResponse;
 import com.shadcn.identity.dto.response.IntrospectResponse;
@@ -56,5 +53,11 @@ public class AuthenticationController {
     ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws JOSEException, ParseException {
         authenticationService.logout(request);
         return ApiResponse.<Void>builder().build();
+    }
+    
+    @PutMapping("/change-password")
+    ApiResponse<String> changePassword(@RequestBody ChangePasswordRequest request) {
+        var result = authenticationService.changePassword(request);
+        return ApiResponse.success(result);
     }
 }
