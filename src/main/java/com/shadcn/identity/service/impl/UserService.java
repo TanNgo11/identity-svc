@@ -45,7 +45,7 @@ public class UserService implements IUserService {
     ProfileMapper profileMapper;
     ProfileClient profileClient;
     INotificationService notificationService;
-    CourseClient deparmentsClient;
+    CourseClient departmentsClient;
 
     @Override
     @Transactional
@@ -258,7 +258,26 @@ public class UserService implements IUserService {
     public UserProfileResponse getStudentProfileById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         Set<String> roleNames = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
-        UserProfileResponse userProfileResponse = profileClient.getStudentProfile(user.getUsername()).getResult();;
+        UserProfileResponse userProfileResponse = profileClient.getStudentProfile(user.getUsername()).getResult();
+        userProfileResponse.setId(user.getId());
+        userProfileResponse.setRoles(roleNames);
+        return userProfileResponse;
+    }
+
+    @Override
+    public UserProfileResponse getUserProfileById(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        Set<String> roleNames = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+        System.out.println(roleNames);
+        UserProfileResponse userProfileResponse =
+                switch (roleNames.iterator().next()) {
+                    case "STUDENT" -> profileClient.getStudentProfile(user.getUsername()).getResult();
+                    case "TEACHER" -> profileClient.getTeacherProfile(user.getUsername()).getResult();
+                    case "ADMIN" -> profileClient.getAdminProfile(user.getUsername()).getResult();
+
+                    default -> throw new IllegalStateException(
+                            "Unexpected value: " + roleNames.iterator().next());
+                };
         userProfileResponse.setId(user.getId());
         userProfileResponse.setRoles(roleNames);
         return userProfileResponse;
@@ -271,9 +290,9 @@ public class UserService implements IUserService {
 
         List<StudentCreationRequest> studentRequests = ExcelUtils.getImportData(workbook, ImportConfig.studentImport);
         List<DepartmentResponse> departmentCodes =
-                deparmentsClient.getAllDepartments().getResult().getData() ;
+                departmentsClient.getAllDepartments().getResult().getData();
         List<AcademicYearResponse> academicYears =
-                deparmentsClient.getAllAcademicYears().getResult();
+                departmentsClient.getAllAcademicYears().getResult();
 
         for (StudentCreationRequest request : studentRequests) {
             String departmentCode = findDepartmentCode(departmentCodes, request.getDepartmentId());

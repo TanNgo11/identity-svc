@@ -30,6 +30,8 @@ public interface IUserService {
 
     UserProfileResponse getStudentProfileById( Long userId);
 
+    UserProfileResponse getUserProfileById(Long userId);
+
     void importStudentDataFromExcel(MultipartFile importFile);
 
     void deleteTeachers(List<String> teacherIds);

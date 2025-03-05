@@ -21,6 +21,7 @@ import lombok.experimental.SuperBuilder;
 public class UserProfileResponse {
     Long id;
     String firstName;
+    String middleName;
     String lastName;
     String username;
 
