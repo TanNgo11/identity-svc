@@ -28,7 +28,9 @@ public interface IUserService {
 
     UserProfileResponse getUserInfo();
 
-    UserProfileResponse getStudentProfileById( Long userId);
+    UserProfileResponse getStudentProfileById(Long userId);
+
+    List<UserProfileResponse> getListUserProfilesByIds(List<Long> userIds);
 
     UserProfileResponse getUserProfileById(Long userId);
 

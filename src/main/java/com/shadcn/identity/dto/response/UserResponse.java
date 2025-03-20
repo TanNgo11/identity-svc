@@ -19,7 +19,6 @@ import lombok.experimental.SuperBuilder;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @SuperBuilder
 public class UserResponse extends BaseDTO {
-
     String username;
     String firstName;
     String lastName;
@@ -31,4 +30,5 @@ public class UserResponse extends BaseDTO {
     String avatar;
     Set<String> roles;
     Status status;
+    String departmentId;
 }
