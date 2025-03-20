@@ -2,7 +2,6 @@ package com.shadcn.identity.repository.httpclient;
 
 import java.util.List;
 
-import com.shadcn.identity.dto.response.PageResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +10,7 @@ import com.shadcn.identity.config.AuthenticationRequestInterceptor;
 import com.shadcn.identity.dto.response.AcademicYearResponse;
 import com.shadcn.identity.dto.response.ApiResponse;
 import com.shadcn.identity.dto.response.DepartmentResponse;
+import com.shadcn.identity.dto.response.PageResponse;
 import com.shadcn.identity.exception.RetreiveMessageErrorDecoder;
 
 @FeignClient(

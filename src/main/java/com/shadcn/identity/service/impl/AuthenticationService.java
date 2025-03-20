@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.StringJoiner;
 import java.util.UUID;
 
-import com.shadcn.identity.dto.request.*;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +21,7 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import com.shadcn.identity.dto.request.*;
 import com.shadcn.identity.dto.response.AuthenticationResponse;
 import com.shadcn.identity.dto.response.IntrospectResponse;
 import com.shadcn.identity.entity.InvalidatedToken;
@@ -271,8 +271,8 @@ public class AuthenticationService implements IAuthenticationService {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         boolean isMatchesOld = passwordEncoder.matches(request.getOldPassword(), user.getPassword());
         boolean isMatchesNew = passwordEncoder.matches(request.getNewPassword(), user.getPassword());
-        if(isMatchesOld) {
-            if(isMatchesNew) {
+        if (isMatchesOld) {
+            if (isMatchesNew) {
                 throw new AppException(ErrorCode.MATCHED_NEW_PASSWORD);
             }
             user.setPassword(passwordEncoder.encode(request.getNewPassword()));

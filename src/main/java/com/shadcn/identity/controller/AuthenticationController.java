@@ -4,10 +4,10 @@ import static com.shadcn.identity.constant.PathConstant.API_V1_AUTH;
 
 import java.text.ParseException;
 
-import com.shadcn.identity.dto.request.*;
 import org.springframework.web.bind.annotation.*;
 
 import com.nimbusds.jose.JOSEException;
+import com.shadcn.identity.dto.request.*;
 import com.shadcn.identity.dto.response.ApiResponse;
 import com.shadcn.identity.dto.response.AuthenticationResponse;
 import com.shadcn.identity.dto.response.IntrospectResponse;
@@ -54,7 +54,7 @@ public class AuthenticationController {
         authenticationService.logout(request);
         return ApiResponse.<Void>builder().build();
     }
-    
+
     @PutMapping("/change-password")
     ApiResponse<String> changePassword(@RequestBody ChangePasswordRequest request) {
         var result = authenticationService.changePassword(request);
