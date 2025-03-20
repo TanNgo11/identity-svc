@@ -24,10 +24,10 @@ import lombok.experimental.FieldDefaults;
 public class AuthenticationController {
     IAuthenticationService authenticationService;
 
-    //    @PostMapping("/outbound/authenticate")
-    //    ApiResponse<AuthenticationResponse> authenticateOutbound(@RequestParam("code") String code) {
-    //        return ApiResponse.success(authenticationService.OutboundAuthenticate(code));
-    //    }
+        @PostMapping("/outbound/authenticate")
+        ApiResponse<AuthenticationResponse> authenticateOutbound(@RequestParam("code") String code) {
+            return ApiResponse.success(authenticationService.OutboundAuthenticate(code));
+        }
 
     @PostMapping("/token")
     ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
