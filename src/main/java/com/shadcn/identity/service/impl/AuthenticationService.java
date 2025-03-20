@@ -3,10 +3,9 @@ package com.shadcn.identity.service.impl;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
+import com.shadcn.identity.dto.request.*;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -21,11 +20,11 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.shadcn.identity.dto.request.*;
 import com.shadcn.identity.dto.response.AuthenticationResponse;
 import com.shadcn.identity.dto.response.IntrospectResponse;
 import com.shadcn.identity.entity.InvalidatedToken;
 import com.shadcn.identity.entity.RefreshToken;
+import com.shadcn.identity.entity.Role;
 import com.shadcn.identity.entity.User;
 import com.shadcn.identity.enums.Status;
 import com.shadcn.identity.exception.AppException;
@@ -37,7 +36,7 @@ import com.shadcn.identity.repository.UserRepository;
 import com.shadcn.identity.repository.httpclient.OutboundIdentityClient;
 import com.shadcn.identity.repository.httpclient.OutboundUserClient;
 import com.shadcn.identity.service.IAuthenticationService;
-
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -283,59 +282,64 @@ public class AuthenticationService implements IAuthenticationService {
         return "Password updated";
     }
 
-    //    @Override
-    //    public AuthenticationResponse OutboundAuthenticate(String code) {
-    //        var response = outboundIdentityClient.exchangeToken(ExchangeTokenRequest.builder()
-    //                .code(code)
-    //                .clientId(CLIENT_ID)
-    //                .clientSecret(CLIENT_SECRET)
-    //                .redirectUri(REDIRECT_URI)
-    //                .grantType(GRANT_TYPE)
-    //                .build());
-    //
-    //        log.info("TOKEN RESPONSE {}", response);
-    //
-    //        var userInfo = outboundUserClient.getUserInfor("json", response.getAccessToken());
-    //
-    //        log.info("USER INFO {}", userInfo);
-    //
-    //
-    //        Set<com.thanhtan.identity.entity.Role> roles = new HashSet<>();
-    //        com.thanhtan.identity.entity.Role userRole =
-    // roleRepository.findByName(com.thanhtan.identity.enums.Role.USER.name()).orElseThrow(() -> new
-    // AppException(ErrorCode.ROLE_NOT_EXISTED));
-    //        roles.add(userRole);
-    //
-    //        var user = userRepository.findByUsername(userInfo.getEmail())
-    //                .orElseGet(() -> {
-    //                    User newUser = User.builder()
-    //                            .username(userInfo.getEmail())
-    //                            .firstName(userInfo.getGivenName())
-    //                            .lastName(userInfo.getFamilyName())
-    //                            .password(UUID.randomUUID().toString())
-    //                            .roles(roles)
-    //                            .build();
-    //                    return userRepository.save(newUser);
-    //                });
-    //        var accessToken = generateToken(user, false);
-    //        var refreshToken = generateToken(user, true);
-    //
-    //
-    //        RefreshToken refreshTokenEntity = new RefreshToken();
-    //
-    //        refreshTokenEntity.setToken(refreshToken);
-    //        refreshTokenEntity.setUsername(user.getUsername());
-    //        refreshTokenEntity.setExpiryTime(Date.from(Instant.now().plus(VALID_REFRESH_DURATION,
-    // ChronoUnit.SECONDS)));
-    //        refreshTokenRepository.save(refreshTokenEntity);
-    //
-    //        return AuthenticationResponse
-    //                .builder()
-    //                .accessToken(accessToken)
-    //                .refreshToken(refreshToken)
-    //                .authenticated(true)
-    //                .build();
-    //    }
+    @Override
+    public AuthenticationResponse OutboundAuthenticate(String code) {
+        log.info(CLIENT_ID);
+        log.info(CLIENT_SECRET);
+        log.info(REDIRECT_URI);
+        log.info(GRANT_TYPE);
+        
+        var response = outboundIdentityClient.exchangeToken(ExchangeTokenRequest.builder()
+                .code(code)
+                .clientId(CLIENT_ID)
+                .clientSecret(CLIENT_SECRET)
+                .redirectUri(REDIRECT_URI)
+                .grantType(GRANT_TYPE)
+                .build());
+        
+      
+
+        log.info("TOKEN RESPONSE {}", response);
+
+        var userInfo = outboundUserClient.getUserInfor("json", response.getAccessToken());
+
+        log.info("USER INFO {}", userInfo);
+
+
+        Set<Role> roles = new HashSet<>();
+        Role userRole =
+                roleRepository.findByName(com.shadcn.identity.enums.Role.STUDENT.name()).orElseThrow(() -> new
+                        AppException(ErrorCode.ROLE_NOT_EXISTED));
+        roles.add(userRole);
+
+        var user = userRepository.findByEmail(userInfo.getEmail())
+                .orElseGet(() -> {
+                    User newUser = User.builder()
+                            .username(userInfo.getEmail())
+                            .password(UUID.randomUUID().toString())
+                            .roles(roles)
+                            .build();
+                    return userRepository.save(newUser);
+                });
+        var accessToken = generateToken(user, false);
+        var refreshToken = generateToken(user, true);
+
+
+        RefreshToken refreshTokenEntity = new RefreshToken();
+
+        refreshTokenEntity.setToken(refreshToken);
+        refreshTokenEntity.setUsername(user.getUsername());
+        refreshTokenEntity.setExpiryTime(Date.from(Instant.now().plus(VALID_REFRESH_DURATION,
+                ChronoUnit.SECONDS)));
+        refreshTokenRepository.save(refreshTokenEntity);
+
+        return AuthenticationResponse
+                .builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .authenticated(true)
+                .build();
+    }
 
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
