@@ -202,7 +202,8 @@ public class UserService implements IUserService {
     public Context resetPasswordContext(String email, String token) {
         Context context = new Context();
         context.setVariable("email", email);
-        context.setVariable("resetPasswordLink", "http://localhost:4567/loggin/resetpassword?token=" + token);
+        context.setVariable("resetPasswordLink", "http://localhost:5173/loggin/resetpassword?token=" + token);
+        context.setVariable("resetPasswordMobileLink", "exp://192.168.2.14:8084/--/login/reset-password?token=" + token);
         return context;
     }
 
