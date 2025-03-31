@@ -134,6 +134,12 @@ public class UserController {
         return ApiResponse.success(userService.getUserProfileById(userId));
     }
 
+    @GetMapping("/admins/findUserByUsername/{username}")
+    @PreAuthorize("hasRole('STUDENT') || hasRole('ADMIN') || hasRole('TEACHER')")
+    public ApiResponse<UserResponse> getUserDetailByUsername(@PathVariable String username) {
+        return ApiResponse.success(userService.getUserDetailByUsername(username));
+    }
+
     @GetMapping("/profiles")
     @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<UserProfileResponse>> getProfileByUserIds(@RequestParam List<Long> userIds) {

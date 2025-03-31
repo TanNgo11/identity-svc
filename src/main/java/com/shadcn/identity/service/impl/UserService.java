@@ -393,6 +393,14 @@ public class UserService implements IUserService {
         profileClient.deleteStudents(request.getStudentUsernames());
     }
 
+    @Override
+    public UserResponse getUserDetailByUsername(String username) {
+        User user = userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return userMapper.toUserResponse(user);
+    }
+
     private String findDepartmentCode(List<DepartmentResponse> departmentCodes, Long departmentId) {
         return departmentCodes.stream()
                 .filter(department -> department.getId().equals(departmentId))
