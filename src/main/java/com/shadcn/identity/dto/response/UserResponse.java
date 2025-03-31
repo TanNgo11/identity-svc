@@ -31,4 +31,5 @@ public class UserResponse extends BaseDTO {
     Set<String> roles;
     Status status;
     String departmentId;
+    Long id;
 }

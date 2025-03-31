@@ -43,4 +43,6 @@ public interface IUserService {
     List<ExcelStudentResponse> getAllStudentProfilesByAcademicYearId(Long academicYearId);
 
     void deleteStudents(DeleteStudentRequest request);
+
+    UserResponse getUserDetailByUsername(String username);
 }
