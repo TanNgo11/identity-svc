@@ -32,4 +32,5 @@ public class UserResponse extends BaseDTO {
     Status status;
     String departmentId;
     Long id;
+    boolean faceVerified;
 }

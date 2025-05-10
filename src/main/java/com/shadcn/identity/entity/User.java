@@ -33,6 +33,9 @@ public class User extends BaseEntity {
     @Column(name = "email_verified", nullable = false, columnDefinition = "boolean default false")
     boolean emailVerified;
 
+    @Column(name = "face_verified", nullable = false, columnDefinition = "boolean default false")
+    boolean faceVerified;
+
     @Enumerated(EnumType.STRING)
     Status status;
 
