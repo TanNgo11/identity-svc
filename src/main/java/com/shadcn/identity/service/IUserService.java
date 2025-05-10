@@ -45,4 +45,6 @@ public interface IUserService {
     void deleteStudents(DeleteStudentRequest request);
 
     UserResponse getUserDetailByUsername(String username);
+
+    void updateFaceVerified(UpdateFaceVerifyRequest request);
 }

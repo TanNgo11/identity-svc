@@ -52,6 +52,13 @@ public class UserController {
         return ApiResponse.empty();
     }
 
+    @PatchMapping("/update-face-verified")
+    @PreAuthorize("hasRole('STUDENT')||hasRole('ADMIN')||hasRole('TEACHER')")
+    public ApiResponse<Void> updateFaceVerified(@RequestBody UpdateFaceVerifyRequest request) {
+        userService.updateFaceVerified(request);
+        return ApiResponse.empty();
+    }
+
     @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/myInfo")
     @PreAuthorize("hasRole('STUDENT')||hasRole('ADMIN')||hasRole('TEACHER')")
@@ -126,7 +133,6 @@ public class UserController {
     public ApiResponse<UserProfileResponse> getStudentProfileByUserId(@PathVariable Long userId) {
         return ApiResponse.success(userService.getStudentProfileById(userId));
     }
-
 
     @GetMapping("/admins/profile/{userId}")
     @PreAuthorize("hasRole('STUDENT') || hasRole('ADMIN') || hasRole('TEACHER')")
