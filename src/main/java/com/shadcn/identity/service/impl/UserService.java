@@ -203,7 +203,8 @@ public class UserService implements IUserService {
         Context context = new Context();
         context.setVariable("email", email);
         context.setVariable("resetPasswordLink", "http://localhost:5173/loggin/resetpassword?token=" + token);
-        context.setVariable("resetPasswordMobileLink", "exp://192.168.2.14:8084/--/login/reset-password?token=" + token);
+        context.setVariable(
+                "resetPasswordMobileLink", "exp://192.168.2.14:8084/--/login/reset-password?token=" + token);
         return context;
     }
 
@@ -274,16 +275,18 @@ public class UserService implements IUserService {
         UserProfileResponse userProfileResponse;
         for (User user : userProfiles) {
             Set<String> roleNames = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
-            switch (roleNames.iterator().next())
-            {
+            switch (roleNames.iterator().next()) {
                 case "STUDENT" -> {
-                    userProfileResponse = profileClient.getStudentProfile(user.getUsername()).getResult();
+                    userProfileResponse =
+                            profileClient.getStudentProfile(user.getUsername()).getResult();
                 }
                 case "TEACHER" -> {
-                    userProfileResponse = profileClient.getTeacherProfile(user.getUsername()).getResult();
+                    userProfileResponse =
+                            profileClient.getTeacherProfile(user.getUsername()).getResult();
                 }
                 case "ADMIN" -> {
-                    userProfileResponse = profileClient.getAdminProfile(user.getUsername()).getResult();
+                    userProfileResponse =
+                            profileClient.getAdminProfile(user.getUsername()).getResult();
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + roleNames);
             }
@@ -301,12 +304,19 @@ public class UserService implements IUserService {
 
         Set<String> roleNames = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
 
-        UserProfileResponse userProfileResponse = switch (roleNames.iterator().next()) {
-            case "STUDENT" -> profileClient.getStudentProfile(user.getUsername()).getResult();
-            case "TEACHER" -> profileClient.getTeacherProfile(user.getUsername()).getResult();
-            case "ADMIN" -> profileClient.getAdminProfile(user.getUsername()).getResult();
-            default -> throw new IllegalStateException("Unexpected value: " + roleNames);
-        };
+        UserProfileResponse userProfileResponse =
+                switch (roleNames.iterator().next()) {
+                    case "STUDENT" -> profileClient
+                            .getStudentProfile(user.getUsername())
+                            .getResult();
+                    case "TEACHER" -> profileClient
+                            .getTeacherProfile(user.getUsername())
+                            .getResult();
+                    case "ADMIN" -> profileClient
+                            .getAdminProfile(user.getUsername())
+                            .getResult();
+                    default -> throw new IllegalStateException("Unexpected value: " + roleNames);
+                };
 
         userProfileResponse.setId(user.getId());
         userProfileResponse.setRoles(roleNames);
@@ -395,10 +405,18 @@ public class UserService implements IUserService {
 
     @Override
     public UserResponse getUserDetailByUsername(String username) {
-        User user = userRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user =
+                userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return userMapper.toUserResponse(user);
+    }
+
+    @Override
+    public void updateFaceVerified(UpdateFaceVerifyRequest request) {
+        User user = userRepository
+                .findByUsername(request.getUsername())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        user.setFaceVerified(true);
+        userRepository.save(user);
     }
 
     private String findDepartmentCode(List<DepartmentResponse> departmentCodes, Long departmentId) {
