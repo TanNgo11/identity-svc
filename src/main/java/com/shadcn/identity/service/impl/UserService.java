@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 import jakarta.transaction.*;
 
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.*;
 import org.springframework.security.crypto.password.*;
 import org.springframework.stereotype.Service;
@@ -47,6 +50,27 @@ public class UserService implements IUserService {
     INotificationService notificationService;
     CourseClient deparmentsClient;
 
+    @Override
+    public PageResponse<TeacherProfileResponse> getListTeachers(int current, int pageSize, String departmentId) {
+        Pageable pageable = PageRequest.of(current - 1, pageSize);
+        Page<User> teachers = userRepository.findAllWithRoles("TEACHER",pageable);
+        List<TeacherProfileResponse> teacherProfiles = new ArrayList<>();
+        for (User teacher : teachers) {
+            TeacherProfileResponse profileResponse = profileClient.getTeacherProfile(teacher.getUsername()).getResult();
+            profileResponse.setId(teacher.getId());
+            Set<String> roles = teacher.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+            profileResponse.setRoles(roles);
+            teacherProfiles.add(profileResponse);
+        }
+        return PageResponse.<TeacherProfileResponse>builder()
+                .current(current)
+                .pageSize(pageSize)
+                .totalPages(teachers.getTotalPages())
+                .totalElements(teachers.getTotalElements())
+                .data(teacherProfiles)
+                .build();
+    }
+    
     @Override
     @Transactional
     public void createStudent(StudentCreationRequest request) {
