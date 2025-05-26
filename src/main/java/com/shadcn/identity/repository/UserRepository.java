@@ -3,6 +3,8 @@ package com.shadcn.identity.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,10 +27,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAllWithRoles();
 
     @Query("SELECT u FROM User u JOIN FETCH u.roles r WHERE r.name = :roleName")
+    Page<User> findAllWithRoles(@Param("roleName") String roleName, Pageable pageable);
+
+    @Query("SELECT u FROM User u JOIN FETCH u.roles r WHERE r.name = :roleName")
     List<User> findAllWithRoles(@Param("roleName") String roleName);
+    
 
     @Query("SELECT u FROM User u WHERE u.id IN :ids")
     List<User> findUsersByIds(@Param("ids") List<Long> ids);
 
     List<User> findAllByUsernameIn(List<String> usernames);
+
 }

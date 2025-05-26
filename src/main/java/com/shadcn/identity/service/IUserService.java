@@ -2,12 +2,10 @@ package com.shadcn.identity.service;
 
 import java.util.List;
 
+import com.shadcn.identity.dto.response.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.shadcn.identity.dto.request.*;
-import com.shadcn.identity.dto.response.ExcelStudentResponse;
-import com.shadcn.identity.dto.response.UserProfileResponse;
-import com.shadcn.identity.dto.response.UserResponse;
 
 public interface IUserService {
     void createStudent(StudentCreationRequest request);
@@ -31,6 +29,8 @@ public interface IUserService {
     UserProfileResponse getStudentProfileById(Long userId);
 
     List<UserProfileResponse> getListUserProfilesByIds(List<Long> userIds);
+
+    PageResponse<TeacherProfileResponse> getListTeachers(int current, int pageSize, String departmentId);
 
     UserProfileResponse getUserProfileById(Long userId);
 

@@ -1,27 +1,22 @@
 package com.shadcn.identity.controller;
 
-import static com.shadcn.identity.constant.PathConstant.API_V1_USERS;
-
-import java.util.List;
-
-import jakarta.validation.Valid;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.shadcn.identity.dto.request.*;
-import com.shadcn.identity.dto.response.ApiResponse;
-import com.shadcn.identity.dto.response.UserProfileResponse;
-import com.shadcn.identity.dto.response.UserResponse;
+import com.shadcn.identity.dto.response.*;
 import com.shadcn.identity.service.IUserService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+import static com.shadcn.identity.constant.PathConstant.API_V1_USERS;
 
 @RestController
 @RequestMapping(API_V1_USERS)
@@ -132,6 +127,16 @@ public class UserController {
     @PreAuthorize("hasRole('STUDENT') || hasRole('ADMIN') || hasRole('TEACHER')")
     public ApiResponse<UserProfileResponse> getStudentProfileByUserId(@PathVariable Long userId) {
         return ApiResponse.success(userService.getStudentProfileById(userId));
+    }
+
+    @GetMapping("/teachers")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER') or hasRole('STUDENT')")
+    public ApiResponse<PageResponse<TeacherProfileResponse>> getAllSemestersByAcademicYearId(
+            @RequestParam(defaultValue = "1", required = false) Integer current,
+            @RequestParam(defaultValue = "10", required = false) Integer pageSize,
+            @RequestParam(required = false) String departmentId
+    ) {
+        return ApiResponse.success(userService.getListTeachers(current, pageSize, departmentId));
     }
 
     @GetMapping("/admins/profile/{userId}")
